@@ -18,6 +18,7 @@
 #ifndef WINDOW_CONTROL_H
 #define WINDOW_CONTROL_H
 
+#include <tchar.h>
 #include <windows.h>
 
 class Window

@@ -18,6 +18,10 @@
 #ifndef PLUGININTERFACE_H
 #define PLUGININTERFACE_H
 
+#ifdef UNICODE
+	#include <tchar.h>
+#endif
+
 #include <windows.h>
 #include "Scintilla.h"
 #include "Notepad_plus_msgs.h"

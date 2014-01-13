@@ -36,7 +36,7 @@ const TCHAR NPP_PLUGIN_NAME[] = TEXT("GOnpp");
 //
 // Here define the number of your plugin commands
 //
-const int nbFunc = 16;
+const int nbFunc = 5;
 
 
 //
@@ -70,20 +70,10 @@ bool setCommand(size_t index, TCHAR *cmdName, PFUNCPLUGINCMD pFunc, ShortcutKey 
 //
 // Your plugin command functions
 //
-void hello();
-void helloFX();
-void WhatIsNpp();
-void insertDateTime(bool format);
-void insertShortDateTime();
-void insertLongDateTime();
-void insertCurrentPath(int which);
-void insertCurrentFullPath();
-void insertCurrentFileName();
-void insertCurrentDirectory();
-void insertHtmlCloseTag();
-void getFileNamesDemo();
-void getSessionFileNamesDemo();
-void saveCurrentSessionDemo();
+void go_fmt(void);
+void go_test(void);
+void go_install(void);
+void go_run(void);
 void DockableDlgDemo();
 
 

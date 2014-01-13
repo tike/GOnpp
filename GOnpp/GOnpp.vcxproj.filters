@@ -27,6 +27,24 @@
     <ClCompile Include="DockingFeature\StaticDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="goCommands\CommandExec.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="goCommands\goCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="goCommands\goFMT.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="goCommands\goINSTALL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="goCommands\goRUN.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="goCommands\goTEST.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DockingFeature\DockingDlgInterface.h">
@@ -57,6 +75,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DockingFeature\Window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="goCommands\CommandExec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="goCommands\goCommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="goCommands\goFMT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="goCommands\goINSTALL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="goCommands\goRUN.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="goCommands\goTEST.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
