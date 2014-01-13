@@ -24,12 +24,10 @@
 class DemoDlg : public DockingDlgInterface
 {
 public :
-	DemoDlg() : DockingDlgInterface(IDD_PLUGINGOLINE_DEMO){};
+	DemoDlg() : DockingDlgInterface(IDD_SHELL_OUTPUT){};
 
     virtual void display(bool toShow = true) const {
         DockingDlgInterface::display(toShow);
-        if (toShow)
-            ::SetFocus(::GetDlgItem(_hSelf, ID_GOLINE_EDIT));
     };
 
 	void setParent(HWND parent2set){
@@ -43,7 +41,7 @@ private :
 
     int getLine() const {
         BOOL isSuccessful;
-        int line = ::GetDlgItemInt(_hSelf, ID_GOLINE_EDIT, &isSuccessful, FALSE);
+        int line = ::GetDlgItemInt(_hSelf, IDD_SHELL_OUTPUT, &isSuccessful, FALSE);
         return (isSuccessful?line:-1);
     };
 

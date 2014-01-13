@@ -28,25 +28,13 @@ BOOL CALLBACK DemoDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			switch (wParam)
 			{
-				case IDOK :
+				case ID_DUMP:
 				{
-					int line = getLine();
-					if (line != -1)
-					{
-						// Get the current scintilla
-						int which = -1;
-						::SendMessage(nppData._nppHandle, NPPM_GETCURRENTSCINTILLA, 0, (LPARAM)&which);
-						if (which == -1)
-							return FALSE;
-						HWND curScintilla = (which == 0)?nppData._scintillaMainHandle:nppData._scintillaSecondHandle;
-
-						::SendMessage(curScintilla, SCI_ENSUREVISIBLE, line-1, 0);
-						::SendMessage(curScintilla, SCI_GOTOLINE, line-1, 0);
-					}
+					::MessageBox(nppData._nppHandle, _T("foo"), _T("ID_DUMP"), MB_OK);
 					return TRUE;
 				}
 			}
-				return FALSE;
+			return FALSE;
 		}
 
 		default :
