@@ -1,11 +1,10 @@
 #include "goCommand.h"
 #include <shlwapi.h>
 
-goCommand::goCommand(LPCTSTR cmd, LPCTSTR flags, bool wants_pkg)
+goCommand::goCommand(LPCTSTR cmd, LPCTSTR flags)
 {
 	this->cmd = cmd;
 	this->flags = flags;
-	this->wantsPkg = wants_pkg;
 
 	this->currentDir = NULL;
 	this->currentFile = NULL;
@@ -32,7 +31,12 @@ goCommand::~goCommand(void)
 	if ( stdErr != NULL) free(stdErr);
 }
 
-DWORD goCommand::runCmd(LPCTSTR go_cmd, LPTSTR current_file){
+BOOL goCommand::preRunCmd(LPCTSTR go_cmd, LPTSTR current_file)
+{
+	return TRUE;
+}
+
+DWORD goCommand::RunCmd(LPCTSTR go_cmd, LPTSTR current_file){
 	if ( ! this->initializeFileVals(current_file)) return 100;
 	if ( ! this->buildCommandLine(go_cmd)) return 101;
 	
@@ -126,13 +130,13 @@ BOOL goCommand::initializeGoVals(void){
 }
 
 BOOL goCommand::buildCommandLine(LPCTSTR go_cmd){
-	TCHAR pkg[MAX_PATH];
-	if (this->wantsPkg){
-		if( ! this->initializeGoVals()) return FALSE;
-		_tcsncpy(pkg, this->goPkg, MAX_PATH);
-	} else {
-		_tcsncpy(pkg, this->currentFile, MAX_PATH);
-	}
+	if( ! this->initializeGoVals()) return FALSE;
+
+	return this->combineCommandLine(go_cmd, this->goPkg);
+}
+
+BOOL goCommand::combineCommandLine(LPCTSTR go_cmd, LPTSTR pkg)
+{
 	PathQuoteSpaces(pkg);
 
 	size_t size = _tcslen(go_cmd) + _tcslen(this->cmd) +_tcslen(pkg) + 2;

@@ -2,7 +2,7 @@
 
 
 goINSTALL::goINSTALL(void)
-	: goCommand(_T("install"), NULL, true)
+	: goCommand(_T("install"), NULL)
 {
 }
 

@@ -2,7 +2,7 @@
 
 
 goTEST::goTEST(void)
-	:goCommand(_T("test"), NULL, true)
+	:goCommand(_T("test"), NULL)
 {
 }
 
