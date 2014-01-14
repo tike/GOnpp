@@ -39,12 +39,6 @@ protected :
 
 private :
 
-    int getLine() const {
-        BOOL isSuccessful;
-        int line = ::GetDlgItemInt(_hSelf, IDD_SHELL_OUTPUT, &isSuccessful, FALSE);
-        return (isSuccessful?line:-1);
-    };
-
 };
 
 #endif //GOTILINE_DLG_H
