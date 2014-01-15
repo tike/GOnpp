@@ -241,9 +241,14 @@ void run_go_tool(goCommand *goCmd){
 
 	DockableDlgDemo();
 
-	goCmd->RunCmd(GO_CMD, path);
-	goCmd->DisplayOutput(nppData);
-	::SetDlgItemText(_goToLine.getHSelf(), ID_DUMP, goCmd->GetstdOut());
+	if ( ! goCmd->InitialiseCmd(GO_CMD, path)){
+		::MessageBox(nppData._nppHandle, TEXT("failed to create commandline"), TEXT("E R R O R"), MB_OK);
+		return;
+	}
+	_goToLine.setText(goCmd->GetCommand(), true);
+	goCmd->RunCmd();
+	_goToLine.appendText(goCmd->GetstdOut());
+	_goToLine.appendText(goCmd->GetstdErr());
 }
 
 

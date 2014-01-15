@@ -42,3 +42,22 @@ BOOL CALLBACK DemoDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam)
 	}
 }
 
+void DemoDlg::setText(LPTSTR text, bool addCRLF)
+{
+	::SetDlgItemText(this->_hSelf, ID_DUMP, text);
+	if(addCRLF){
+		this->appendText(TEXT("\r\n"));
+	}
+}
+
+void DemoDlg::appendText(LPTSTR text)
+{
+	HWND hEdit = GetDlgItem(this->_hSelf, ID_DUMP);
+	int ndx = GetWindowTextLength(hEdit);
+	#ifdef WIN32
+      SendMessage (hEdit, EM_SETSEL, (WPARAM)ndx, (LPARAM)ndx);
+   #else
+      SendMessage (hEdit, EM_SETSEL, 0, MAKELONG (ndx, ndx));
+   #endif
+      SendMessage (hEdit, EM_REPLACESEL, 0, (LPARAM) ((LPSTR) text));
+}

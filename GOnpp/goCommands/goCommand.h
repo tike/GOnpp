@@ -11,7 +11,8 @@ public:
 	goCommand(LPCTSTR cmd, LPCTSTR flags);
 	~goCommand(void);
 
-	DWORD RunCmd(LPCTSTR go_cmd, LPTSTR current_file);
+	BOOL InitialiseCmd(LPCTSTR go_cmd, LPTSTR current_file);
+	DWORD RunCmd(void);
 	LPTSTR GetCommand(void);
 
 	DWORD exitStatus;

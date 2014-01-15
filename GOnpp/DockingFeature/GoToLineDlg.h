@@ -34,6 +34,9 @@ public :
 		_hParent = parent2set;
 	};
 
+	void setText(LPTSTR text, bool addCRLF);
+	void appendText(LPTSTR text);
+
 protected :
 	virtual BOOL CALLBACK run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam);
 

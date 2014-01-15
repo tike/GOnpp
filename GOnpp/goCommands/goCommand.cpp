@@ -36,10 +36,15 @@ BOOL goCommand::preRunCmd(LPCTSTR go_cmd, LPTSTR current_file)
 	return TRUE;
 }
 
-DWORD goCommand::RunCmd(LPCTSTR go_cmd, LPTSTR current_file){
-	if ( ! this->initializeFileVals(current_file)) return 100;
-	if ( ! this->buildCommandLine(go_cmd)) return 101;
-	
+BOOL goCommand::InitialiseCmd(LPCTSTR go_cmd, LPTSTR current_file)
+{
+	if ( ! this->initializeFileVals(current_file)) return FALSE;
+	if ( ! this->buildCommandLine(go_cmd)) return FALSE;
+
+	return TRUE;
+}
+
+DWORD goCommand::RunCmd(void){
 	CommandExec *exec = new CommandExec(this->commandLine, this->currentDir);
 	if ( ! exec->Start()) return 200;
 	if ( ! exec->Wait()) return 201;
