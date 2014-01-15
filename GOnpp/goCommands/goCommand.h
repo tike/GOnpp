@@ -8,10 +8,10 @@
 class goCommand
 {
 public:
-	goCommand(LPCTSTR cmd, LPCTSTR flags, bool wants_pkg);
+	goCommand(LPCTSTR cmd, LPCTSTR flags);
 	~goCommand(void);
 
-	DWORD runCmd(LPCTSTR go_cmd, LPTSTR current_file);
+	DWORD RunCmd(LPCTSTR go_cmd, LPTSTR current_file);
 	LPTSTR GetCommand(void);
 
 	DWORD exitStatus;
@@ -24,7 +24,6 @@ protected:
 	// configuration Variables
 	LPCTSTR cmd;
 	LPCTSTR flags;
-	bool wantsPkg;
 
 	// pkg related runvars
 	LPTSTR currentFile;
@@ -41,6 +40,10 @@ protected:
 	// path operations
 	BOOL initializeGoVals(void);
 	BOOL initializeFileVals(LPTSTR current_file);
-	BOOL buildCommandLine(LPCTSTR go_cmd);
+
+	virtual BOOL buildCommandLine(LPCTSTR go_cmd);
+	BOOL combineCommandLine(LPCTSTR go_cmd, LPTSTR pkg);
+
+	virtual BOOL preRunCmd(LPCTSTR go_cmd, LPTSTR current_file);
 };
 

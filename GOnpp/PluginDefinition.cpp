@@ -241,7 +241,7 @@ void run_go_tool(goCommand *goCmd){
 
 	DockableDlgDemo();
 
-	goCmd->runCmd(GO_CMD, path);
+	goCmd->RunCmd(GO_CMD, path);
 	goCmd->DisplayOutput(nppData);
 	::SetDlgItemText(_goToLine.getHSelf(), ID_DUMP, goCmd->GetstdOut());
 }

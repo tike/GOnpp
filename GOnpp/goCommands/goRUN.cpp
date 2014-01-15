@@ -2,13 +2,18 @@
 
 
 goRUN::goRUN(void)
-	:goCommand(_T("run"), NULL, false)
+	:goCommand(_T("run"), NULL)
 {
 }
 
 
 goRUN::~goRUN(void)
 {
+}
+
+BOOL goRUN::buildCommandLine(LPCTSTR go_cmd)
+{
+	return this->combineCommandLine(go_cmd, this->currentFile);
 }
 
 void goRUN::DisplayOutput(NppData nppData)

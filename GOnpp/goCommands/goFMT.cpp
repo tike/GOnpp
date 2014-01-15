@@ -2,7 +2,7 @@
 
 
 goFMT::goFMT(void)
-	:goCommand(_T("fmt"), NULL, true)
+	:goCommand(_T("fmt"), NULL)
 {
 	
 }
