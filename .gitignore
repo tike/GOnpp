@@ -29,5 +29,7 @@ $tf*/
 */Unicode*
 
 *.opensdf
+*.sdf
+
 
 NppPluginDemo/*
