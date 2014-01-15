@@ -16,7 +16,11 @@ public:
 	LPTSTR GetCommand(void);
 
 	DWORD exitStatus;
+
+	BOOL HasStdOut(void);
 	LPTSTR GetstdOut(void);
+
+	BOOL HasStdErr(void);
 	LPTSTR GetstdErr(void);
 
 	virtual void DisplayOutput(NppData nppData);

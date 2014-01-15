@@ -66,12 +66,28 @@ LPTSTR goCommand::GetCommand(void)
 	return cl;
 }
 
+BOOL goCommand::HasStdOut(void)
+{
+	if (_tcslen(this->stdOut) > 0) {
+		return TRUE;
+	}
+	return FALSE;
+}
+
 LPTSTR goCommand::GetstdOut(void)
 {
 	if (this->stdOut == NULL) return NULL;
 
 	LPTSTR cl = (LPTSTR) _tcsdup(this->stdOut);
 	return cl;
+}
+
+BOOL goCommand::HasStdErr(void)
+{
+	if (_tcslen(this->stdErr) > 0) {
+		return TRUE;
+	}
+	return FALSE;
 }
 
 LPTSTR goCommand::GetstdErr(void)

@@ -42,16 +42,38 @@ BOOL CALLBACK DemoDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam)
 	}
 }
 
+LPTSTR DemoDlg::prettyfy(LPTSTR text)
+{
+	size_t size = _tcslen(text) + 50;
+	LPTSTR res = (LPTSTR) calloc(size+1, sizeof(TCHAR));
+	
+	LPTSTR rest = NULL;
+	LPTSTR current = _tcstok_s(text, _T("\n"), &rest);
+	while(current != NULL){
+		if( _tcslen(current) > size - _tcslen(res)){
+			size += 500;
+			res = (LPTSTR) realloc(res, size * sizeof(TCHAR));
+			if (res == NULL){
+				return NULL;
+			}
+		}
+		_tcsncat(res, current, __min(size -_tcslen(res), _tcslen(current)));
+		_tcsncat(res, _T("\r\n"), __min(size - _tcslen(res), 2 * sizeof(TCHAR)));
+		current = _tcstok_s(NULL, _T("\n"), &rest);
+	}
+	return res;
+}
+
+
 void DemoDlg::setText(LPTSTR text, bool addCRLF)
 {
 	::SetDlgItemText(this->_hSelf, ID_DUMP, text);
-	if(addCRLF){
-		this->appendText(TEXT("\r\n"));
-	}
+	if(addCRLF) this->appendText(TEXT(""), true);
 }
 
-void DemoDlg::appendText(LPTSTR text)
+void DemoDlg::appendText(LPTSTR text, bool addCRLF)
 {
+	LPTSTR pText = this->prettyfy(text);
 	HWND hEdit = GetDlgItem(this->_hSelf, ID_DUMP);
 	int ndx = GetWindowTextLength(hEdit);
 	#ifdef WIN32
@@ -59,5 +81,7 @@ void DemoDlg::appendText(LPTSTR text)
    #else
       SendMessage (hEdit, EM_SETSEL, 0, MAKELONG (ndx, ndx));
    #endif
-      SendMessage (hEdit, EM_REPLACESEL, 0, (LPARAM) ((LPSTR) text));
+      SendMessage (hEdit, EM_REPLACESEL, 0, (LPARAM) ((LPSTR) pText));
+	  if (addCRLF)::SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM) ((LPSTR) TEXT("\r\n")));
+	  free(pText);
 }

@@ -239,7 +239,7 @@ void run_go_tool(goCommand *goCmd){
 	::SendMessage(nppData._nppHandle, NPPM_GETFULLCURRENTPATH, MAX_PATH, (LPARAM) path);
 	::SendMessage(nppData._nppHandle, NPPM_SAVECURRENTFILE, 0, 0);
 
-	DockableDlgDemo();
+	 DockableDlgDemo();
 
 	if ( ! goCmd->InitialiseCmd(GO_CMD, path)){
 		::MessageBox(nppData._nppHandle, TEXT("failed to create commandline"), TEXT("E R R O R"), MB_OK);
@@ -247,8 +247,19 @@ void run_go_tool(goCommand *goCmd){
 	}
 	_goToLine.setText(goCmd->GetCommand(), true);
 	goCmd->RunCmd();
-	_goToLine.appendText(goCmd->GetstdOut());
-	_goToLine.appendText(goCmd->GetstdErr());
+	if(goCmd->HasStdOut()){
+		LPTSTR stdOut = goCmd->GetstdOut();
+		_goToLine.appendText(stdOut, true);
+		free(stdOut);
+	}
+
+	if(goCmd->HasStdErr()){
+		LPTSTR stdErr = goCmd->GetstdErr();
+		_goToLine.appendText(stdErr, true);
+		free(stdErr);
+	}
+	if (! goCmd->HasStdErr() && ! goCmd->HasStdOut())_goToLine.display(false);
+	return;
 }
 
 
