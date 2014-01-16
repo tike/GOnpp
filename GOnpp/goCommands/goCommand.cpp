@@ -21,7 +21,9 @@ goCommand::goCommand(LPCTSTR cmd, LPCTSTR flags)
 goCommand::~goCommand(void)
 {
 	if ( currentDir != NULL) free(currentDir);
-	if ( currentFile != NULL) free(currentFile);
+	if ( currentFile != NULL) {
+		free(currentFile);
+	}
 
 	if ( goPath != NULL) free(goPath);
 	if ( goPkg != NULL) free(goPkg);
@@ -98,12 +100,11 @@ LPTSTR goCommand::GetstdErr(void)
 	return cl;
 }
 
-
-
 BOOL goCommand::initializeFileVals(LPTSTR current_file)
 {
-	this->currentFile = (LPTSTR) _tcsdup(current_file);
+	this->currentFile = (LPTSTR) calloc(MAX_PATH, sizeof(TCHAR));
 	if (this->currentFile == NULL) return FALSE;
+	_tcsncpy(this->currentFile, current_file, __min(MAX_PATH, _tcslen(current_file)));
 
 	this->currentDir = (LPTSTR) _tcsdup(this->currentFile);
 	if (this->currentDir == NULL) return FALSE;
