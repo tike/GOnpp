@@ -24,9 +24,6 @@
 #include <Shlwapi.h>
 #include "GoToLineDlg.h"
 #include "goCommands/goCommand.h"
-#include "goCommands/goFMT.h"
-#include "goCommands/goTEST.h"
-#include "goCommands/goINSTALL.h"
 #include "goCommands/goRUN.h"
 
 const TCHAR sectionName[] = TEXT("Insert Extesion");
@@ -230,20 +227,20 @@ BOOL is_go_file(void){
 
 typedef void (*outputhandler)(goCommand *goCmd);
 
-void run_go_tool(goCommand *goCmd){
+DWORD run_go_tool(goCommand *goCmd){
 	if ( !GO_CMD_FOUND || !is_go_file()){
-		return;
+		return FALSE;
 	}
 	
 	TCHAR path[MAX_PATH];
 	::SendMessage(nppData._nppHandle, NPPM_GETFULLCURRENTPATH, MAX_PATH, (LPARAM) path);
-	::SendMessage(nppData._nppHandle, NPPM_SAVECURRENTFILE, 0, 0);
+	::SendMessage(nppData._nppHandle, NPPM_SAVEALLFILES, 0, 0);
 
 	 DockableDlgDemo();
 
 	if ( ! goCmd->InitialiseCmd(GO_CMD, path)){
 		::MessageBox(nppData._nppHandle, TEXT("failed to create commandline"), TEXT("E R R O R"), MB_OK);
-		return;
+		return FALSE;
 	}
 	_goToLine.setText(goCmd->GetCommand());
 	goCmd->RunCmd();
@@ -259,21 +256,25 @@ void run_go_tool(goCommand *goCmd){
 		free(stdErr);
 	}
 	if (! goCmd->HasStdErr() && ! goCmd->HasStdOut())_goToLine.display(false);
-	return;
+	return TRUE;
 }
 
 
 void go_fmt(void)
 {	
-	goCommand* goCmd = new goFMT();
-	run_go_tool(goCmd);
+	goCommand* goCmd = new goCommand(_T("fmt"), NULL);
+	if(run_go_tool(goCmd)){
+		TCHAR path[MAX_PATH];
+		::SendMessage(nppData._nppHandle, NPPM_GETFULLCURRENTPATH, MAX_PATH, (LPARAM) path);
+		::SendMessage(nppData._nppHandle, NPPM_RELOADFILE, FALSE, (LPARAM) path);
+	}
 	delete(goCmd);
 }
 
 
 void go_test(void)
 {
-	goCommand* goCmd = new goTEST();
+	goCommand* goCmd = new goCommand(_T("test"), NULL);
 	run_go_tool(goCmd);
 	delete(goCmd);
 }
@@ -282,8 +283,12 @@ void go_test(void)
 
 void go_install(void)
 {	
-	goCommand* goCmd = new goINSTALL();
-	run_go_tool(goCmd);
+	goCommand* goCmd = new goCommand(_T("install"), NULL);
+	if (run_go_tool(goCmd)){
+		LPTSTR cmd = goCmd->GetCommand();
+		::MessageBox(nppData._nppHandle, cmd, _T("Build successfull"), MB_OK);
+		free(cmd);
+	}
 	delete(goCmd);
 }
 

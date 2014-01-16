@@ -5,6 +5,8 @@
 #include "PluginInterface.h"
 #include "CommandExec.h"
 
+#define MAX_ENVIRON  32767
+
 class goCommand
 {
 public:
@@ -22,8 +24,6 @@ public:
 
 	BOOL HasStdErr(void);
 	LPTSTR GetstdErr(void);
-
-	virtual void DisplayOutput(NppData nppData);
 
 protected:
 	// configuration Variables
@@ -49,6 +49,6 @@ protected:
 	virtual BOOL buildCommandLine(LPCTSTR go_cmd);
 	BOOL combineCommandLine(LPCTSTR go_cmd, LPTSTR pkg);
 
-	virtual BOOL preRunCmd(LPCTSTR go_cmd, LPTSTR current_file);
+	virtual BOOL preRunCmd(void);
 };
 

@@ -33,16 +33,7 @@
     <ClCompile Include="goCommands\goCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="goCommands\goFMT.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="goCommands\goINSTALL.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="goCommands\goRUN.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="goCommands\goTEST.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -83,16 +74,7 @@
     <ClInclude Include="goCommands\goCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="goCommands\goFMT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="goCommands\goINSTALL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="goCommands\goRUN.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="goCommands\goTEST.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

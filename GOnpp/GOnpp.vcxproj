@@ -199,10 +199,7 @@
     <ClCompile Include="DockingFeature\GoToLineDlg.cpp" />
     <ClCompile Include="goCommands\CommandExec.cpp" />
     <ClCompile Include="goCommands\goCommand.cpp" />
-    <ClCompile Include="goCommands\goFMT.cpp" />
-    <ClCompile Include="goCommands\goINSTALL.cpp" />
     <ClCompile Include="goCommands\goRUN.cpp" />
-    <ClCompile Include="goCommands\goTEST.cpp" />
     <ClCompile Include="NppPluginDemo.cpp" />
     <ClCompile Include="PluginDefinition.cpp" />
     <ClCompile Include="DockingFeature\StaticDialog.cpp" />
@@ -212,10 +209,7 @@
     <ClInclude Include="DockingFeature\GoToLineDlg.h" />
     <ClInclude Include="goCommands\CommandExec.h" />
     <ClInclude Include="goCommands\goCommand.h" />
-    <ClInclude Include="goCommands\goFMT.h" />
-    <ClInclude Include="goCommands\goINSTALL.h" />
     <ClInclude Include="goCommands\goRUN.h" />
-    <ClInclude Include="goCommands\goTEST.h" />
     <ClInclude Include="menuCmdID.h" />
     <ClInclude Include="Notepad_plus_msgs.h" />
     <ClInclude Include="PluginDefinition.h" />

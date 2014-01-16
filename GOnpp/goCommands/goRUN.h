@@ -7,7 +7,7 @@ public:
 	goRUN(void);
 	~goRUN(void);
 
+	BOOL preRunCmd(void);
 	BOOL buildCommandLine(LPCTSTR go_cmd);
-	void DisplayOutput(NppData nppData);
 };
 

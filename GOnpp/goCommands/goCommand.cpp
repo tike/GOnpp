@@ -33,9 +33,21 @@ goCommand::~goCommand(void)
 	if ( stdErr != NULL) free(stdErr);
 }
 
-BOOL goCommand::preRunCmd(LPCTSTR go_cmd, LPTSTR current_file)
+BOOL goCommand::preRunCmd(void)
 {
-	return TRUE;
+	LPTSTR raw_gopath = (LPTSTR) calloc(MAX_ENVIRON, sizeof(TCHAR));
+	if (raw_gopath == NULL){
+		return FALSE;
+	}
+
+	DWORD length = GetEnvironmentVariable(_TEXT("GOPATH"), raw_gopath, MAX_ENVIRON);
+	if (length != 0){
+		free(raw_gopath);
+		return TRUE;
+	}
+
+	free(raw_gopath);
+	return ::SetEnvironmentVariable(_T("GOPATH"), this->goPath);
 }
 
 BOOL goCommand::InitialiseCmd(LPCTSTR go_cmd, LPTSTR current_file)
@@ -47,6 +59,8 @@ BOOL goCommand::InitialiseCmd(LPCTSTR go_cmd, LPTSTR current_file)
 }
 
 DWORD goCommand::RunCmd(void){
+	if ( ! this->preRunCmd()) return FALSE;
+
 	CommandExec *exec = new CommandExec(this->commandLine, this->currentDir);
 	if ( ! exec->Start()) return 200;
 	if ( ! exec->Wait()) return 201;
@@ -173,18 +187,4 @@ BOOL goCommand::combineCommandLine(LPCTSTR go_cmd, LPTSTR pkg)
 
 	this->commandLine = args;
 	return TRUE;
-}
-
-
-void goCommand::DisplayOutput(NppData nppData)
-{
-	switch(this->exitStatus){
-		case 2:
-			::MessageBox(nppData._nppHandle, this->stdErr, this->commandLine, MB_OK);
-			break;
-		case 1:
-		case 0:
-			::MessageBox(nppData._nppHandle, this->stdOut, this->commandLine, MB_OK);
-			break;
-	}
 }
