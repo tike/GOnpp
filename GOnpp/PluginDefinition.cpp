@@ -245,17 +245,17 @@ void run_go_tool(goCommand *goCmd){
 		::MessageBox(nppData._nppHandle, TEXT("failed to create commandline"), TEXT("E R R O R"), MB_OK);
 		return;
 	}
-	_goToLine.setText(goCmd->GetCommand(), true);
+	_goToLine.setText(goCmd->GetCommand());
 	goCmd->RunCmd();
 	if(goCmd->HasStdOut()){
 		LPTSTR stdOut = goCmd->GetstdOut();
-		_goToLine.appendText(stdOut, true);
+		_goToLine.appendText(stdOut);
 		free(stdOut);
 	}
 
 	if(goCmd->HasStdErr()){
 		LPTSTR stdErr = goCmd->GetstdErr();
-		_goToLine.appendText(stdErr, true);
+		_goToLine.appendText(stdErr);
 		free(stdErr);
 	}
 	if (! goCmd->HasStdErr() && ! goCmd->HasStdOut())_goToLine.display(false);

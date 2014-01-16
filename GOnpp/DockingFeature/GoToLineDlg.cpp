@@ -24,14 +24,19 @@ BOOL CALLBACK DemoDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message) 
 	{
-		case WM_COMMAND : 
+		case WM_SIZE:
 		{
-			switch (wParam)
+			//::MessageBox(nppData._nppHandle, _T("foo"), _T("WM_SIZE"), MB_OK);
+			switch(wParam)
 			{
-				case ID_DUMP:
+				case SIZE_RESTORED:
 				{
-					::MessageBox(nppData._nppHandle, _T("foo"), _T("ID_DUMP"), MB_OK);
-					return TRUE;
+					//::MessageBox(nppData._nppHandle, _T("SIZE_RESTORED"), _T("WM_SIZE"), MB_OK);
+					RECT rc;
+					::GetWindowRect(_hSelf, &rc);
+					HWND hEdit = GetDlgItem(_hSelf, ID_DUMP);
+					::MoveWindow(hEdit, 0, 0, rc.right - rc.left, rc.bottom - rc.top, TRUE);
+					break;
 				}
 			}
 			return FALSE;
@@ -42,6 +47,13 @@ BOOL CALLBACK DemoDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam)
 	}
 }
 
+void DemoDlg::reshape(int width)
+{
+	RECT rc;
+	::GetWindowRect(_hSelf, &rc);
+	::MoveWindow(_hSelf, rc.top, rc.left, width, rc.bottom - rc.top, TRUE);
+}
+
 LPTSTR DemoDlg::prettyfy(LPTSTR text)
 {
 	size_t size = _tcslen(text) + 50;
@@ -50,6 +62,9 @@ LPTSTR DemoDlg::prettyfy(LPTSTR text)
 	LPTSTR rest = NULL;
 	LPTSTR current = _tcstok_s(text, _T("\n"), &rest);
 	while(current != NULL){
+		if (_tcslen(current) > _maxLine){
+			_maxLine = _tcslen(current);
+		}
 		if( _tcslen(current) > size - _tcslen(res)){
 			size += 500;
 			res = (LPTSTR) realloc(res, size * sizeof(TCHAR));
@@ -65,15 +80,20 @@ LPTSTR DemoDlg::prettyfy(LPTSTR text)
 }
 
 
-void DemoDlg::setText(LPTSTR text, bool addCRLF)
+void DemoDlg::setText(LPTSTR text)
 {
-	::SetDlgItemText(this->_hSelf, ID_DUMP, text);
-	if(addCRLF) this->appendText(TEXT(""), true);
+	LPTSTR lines = prettyfy(text);
+	if ( lines == NULL) return;
+
+	::SetDlgItemText(this->_hSelf, ID_DUMP, lines);
+	free(lines);
 }
 
-void DemoDlg::appendText(LPTSTR text, bool addCRLF)
+void DemoDlg::appendText(LPTSTR text)
 {
 	LPTSTR pText = this->prettyfy(text);
+	if ( pText == NULL) return;
+
 	HWND hEdit = GetDlgItem(this->_hSelf, ID_DUMP);
 	int ndx = GetWindowTextLength(hEdit);
 	#ifdef WIN32
@@ -82,6 +102,5 @@ void DemoDlg::appendText(LPTSTR text, bool addCRLF)
       SendMessage (hEdit, EM_SETSEL, 0, MAKELONG (ndx, ndx));
    #endif
       SendMessage (hEdit, EM_REPLACESEL, 0, (LPARAM) ((LPSTR) pText));
-	  if (addCRLF)::SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM) ((LPSTR) TEXT("\r\n")));
 	  free(pText);
 }

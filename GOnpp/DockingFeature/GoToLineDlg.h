@@ -34,13 +34,14 @@ public :
 		_hParent = parent2set;
 	};
 
-	void setText(LPTSTR text, bool addCRLF);
-	void appendText(LPTSTR text, bool addCRLF);
+	void setText(LPTSTR text);
+	void appendText(LPTSTR text);
 	LPTSTR prettyfy(LPTSTR text);
 
 protected :
 	virtual BOOL CALLBACK run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam);
-
+	void reshape(int width);
+	unsigned int _maxLine;
 private :
 
 };
