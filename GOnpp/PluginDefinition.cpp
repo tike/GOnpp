@@ -255,7 +255,11 @@ DWORD run_go_tool(goCommand *goCmd){
 		_goToLine.appendText(stdErr);
 		free(stdErr);
 	}
-	if (! goCmd->HasStdErr() && ! goCmd->HasStdOut())_goToLine.display(false);
+	if (! goCmd->HasStdErr() && ! goCmd->HasStdOut()){
+		_goToLine.display(false);
+	} else {
+		::SetFocus(nppData._nppHandle);
+	}
 	return TRUE;
 }
 
@@ -284,7 +288,8 @@ void go_test(void)
 void go_install(void)
 {	
 	goCommand* goCmd = new goCommand(_T("install"), NULL);
-	if (run_go_tool(goCmd)){
+	run_go_tool(goCmd);
+	if (! goCmd->exitStatus){
 		LPTSTR cmd = goCmd->GetCommand();
 		::MessageBox(nppData._nppHandle, cmd, _T("Build successfull"), MB_OK);
 		free(cmd);
