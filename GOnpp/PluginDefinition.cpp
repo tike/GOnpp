@@ -225,7 +225,36 @@ BOOL is_go_file(void){
 	return TRUE;
 }
 
-typedef void (*outputhandler)(goCommand *goCmd);
+BOOL reload_all_files(void){
+	int num_files = ::SendMessage(nppData._nppHandle, NPPM_GETNBOPENFILES, 0, ALL_OPEN_FILES);
+		
+	TCHAR **file_names = (TCHAR**) calloc(num_files, sizeof(TCHAR*));
+	if (file_names == NULL) return FALSE;
+
+	int i = 0;
+	for (i=0; i<num_files; i++){
+		file_names[i] = (TCHAR*) calloc(MAX_PATH, sizeof(TCHAR));
+		if (file_names[i] == NULL) return FALSE;
+	}
+
+	if ( num_files != ::SendMessage(nppData._nppHandle, NPPM_GETOPENFILENAMES, (WPARAM) file_names, num_files)){
+		return FALSE;
+	}
+
+		
+	for ( i=0; i<num_files; i++){
+		TCHAR curr_file[MAX_PATH];
+		_tcsncpy(curr_file, file_names[i], MAX_PATH);
+		::SendMessage(nppData._nppHandle, NPPM_RELOADFILE, FALSE, (LPARAM) curr_file);
+	}
+		
+	for (i=0; i<num_files; i++){
+		free(file_names[i]);
+	}
+	free(file_names);
+
+	return TRUE;
+}
 
 DWORD run_go_tool(goCommand *goCmd){
 	if ( !GO_CMD_FOUND || !is_go_file()){
@@ -267,10 +296,11 @@ DWORD run_go_tool(goCommand *goCmd){
 void go_fmt(void)
 {	
 	goCommand* goCmd = new goCommand(_T("fmt"), NULL);
-	if(run_go_tool(goCmd)){
-		TCHAR path[MAX_PATH];
-		::SendMessage(nppData._nppHandle, NPPM_GETFULLCURRENTPATH, MAX_PATH, (LPARAM) path);
-		::SendMessage(nppData._nppHandle, NPPM_RELOADFILE, FALSE, (LPARAM) path);
+
+	if ( ! run_go_tool(goCmd)) return;
+
+	if( ! goCmd->exitStatus){
+		if (reload_all_files())	_goToLine.display(false);
 	}
 	delete(goCmd);
 }
@@ -279,7 +309,9 @@ void go_fmt(void)
 void go_test(void)
 {
 	goCommand* goCmd = new goCommand(_T("test"), NULL);
-	run_go_tool(goCmd);
+	
+	if ( ! run_go_tool(goCmd)) return;
+
 	delete(goCmd);
 }
 
@@ -288,7 +320,9 @@ void go_test(void)
 void go_install(void)
 {	
 	goCommand* goCmd = new goCommand(_T("install"), NULL);
-	run_go_tool(goCmd);
+
+	if ( ! run_go_tool(goCmd)) return;
+
 	if (! goCmd->exitStatus){
 		LPTSTR cmd = goCmd->GetCommand();
 		::MessageBox(nppData._nppHandle, cmd, _T("Build successfull"), MB_OK);
@@ -301,7 +335,9 @@ void go_install(void)
 void go_run(void)
 {	
 	goCommand* goCmd = new goRUN();
-	run_go_tool(goCmd);
+
+	if ( ! run_go_tool(goCmd)) return;
+
 	delete(goCmd);
 }
 

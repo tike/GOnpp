@@ -21,9 +21,7 @@ goCommand::goCommand(LPCTSTR cmd, LPCTSTR flags)
 goCommand::~goCommand(void)
 {
 	if ( currentDir != NULL) free(currentDir);
-	if ( currentFile != NULL) {
-		free(currentFile);
-	}
+	if ( currentFile != NULL) free(currentFile);
 
 	if ( goPath != NULL) free(goPath);
 	if ( goPkg != NULL) free(goPkg);
