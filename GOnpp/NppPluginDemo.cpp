@@ -1,3 +1,19 @@
+//Copyright (C)2014 tike <timflex@gmx.de>
+//
+//This program is free software; you can redistribute it and/or
+//modify it under the terms of the GNU General Public License
+//as published by the Free Software Foundation; either
+//version 2 of the License, or (at your option) any later version.
+//
+//This program is distributed in the hope that it will be useful,
+//but WITHOUT ANY WARRANTY; without even the implied warranty of
+//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//GNU General Public License for more details.
+//
+//You should have received a copy of the GNU General Public License
+//along with this program; if not, write to the Free Software
+//Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
 //this file is part of notepad++
 //Copyright (C)2003 Don HO <donho@altern.org>
 //
@@ -23,7 +39,7 @@ extern FuncItem funcItem[nbFunc];
 extern NppData nppData;
 extern bool doCloseTag;
 
-extern CmdDlg _goToLine;
+extern CmdDlg _cmdDlg;
 
 BOOL APIENTRY DllMain( HANDLE hModule, 
                        DWORD  reasonForCall, 
@@ -75,71 +91,6 @@ extern "C" __declspec(dllexport) void beNotified(SCNotification *notifyCode)
 		case NPPN_SHUTDOWN:
 		{
 			commandMenuCleanUp();
-		}
-		break;
-
-		case SCN_CHARADDED:
-		{
-			LangType docType;
-			::SendMessage(nppData._nppHandle, NPPM_GETCURRENTLANGTYPE, 0, (LPARAM)&docType);
-			bool isDocTypeHTML = (docType == L_HTML || docType == L_XML || docType == L_PHP);
-			if (doCloseTag && isDocTypeHTML)
-			{
-				if (notifyCode->ch == '>')
-				{
-					char buf[512];
-					int currentEdit;
-					::SendMessage(nppData._nppHandle, NPPM_GETCURRENTSCINTILLA, 0, (LPARAM)&currentEdit);
-					HWND hCurrentEditView = (currentEdit == 0)?nppData._scintillaMainHandle:nppData._scintillaSecondHandle;
-					int currentPos = int(::SendMessage(hCurrentEditView, SCI_GETCURRENTPOS, 0, 0));
-					int beginPos = currentPos - (sizeof(buf) - 1);
-					int startPos = (beginPos > 0)?beginPos:0;
-					int size = currentPos - startPos;
-					int insertStringSize = 2;
-					char insertString[516] = "</";
-
-					if (size >= 3) 
-					{
-						struct TextRange tr = {{startPos, currentPos}, buf};
-
-						::SendMessage(hCurrentEditView, SCI_GETTEXTRANGE, 0, (LPARAM)&tr);
-
-						if (buf[size-2] != '/') 
-						{
-
-							const char *pBegin = &buf[0];
-							const char *pCur = &buf[size - 2];
-							int  insertStringSize = 2;
-
-							for (; pCur > pBegin && *pCur != '<' && *pCur != '>' ;)
-								pCur--;
-								
-
-							if (*pCur == '<')
-							{
-								pCur++;
-								
-								while (StrChrA(":_-.", *pCur) || IsCharAlphaNumeric(*pCur))
-								{
-									insertString[insertStringSize++] = *pCur;
-									pCur++;
-								}
-							}
-
-							insertString[insertStringSize++] = '>';
-							insertString[insertStringSize] = '\0';
-
-							if (insertStringSize > 3)
-							{				
-								::SendMessage(hCurrentEditView, SCI_BEGINUNDOACTION, 0, 0);
-								::SendMessage(hCurrentEditView, SCI_REPLACESEL, 0, (LPARAM)insertString);
-								::SendMessage(hCurrentEditView, SCI_SETSEL, currentPos, currentPos);
-								::SendMessage(hCurrentEditView, SCI_ENDUNDOACTION, 0, 0);
-							}
-						}
-					}	
-				}
-			}
 		}
 		break;
 
