@@ -325,7 +325,7 @@ void go_install(void)
 
 	if (! goCmd->exitStatus){
 		LPTSTR cmd = goCmd->GetCommand();
-		::MessageBox(nppData._nppHandle, cmd, _T("Build successfull"), MB_OK);
+		//::MessageBox(nppData._nppHandle, cmd, _T("Build successfull"), MB_OK);
 		free(cmd);
 	}
 	delete(goCmd);
