@@ -17,13 +17,13 @@
 
 #include "PluginDefinition.h"
 #include <shlwapi.h>
-#include "GoToLineDlg.h"
+#include "CmdDlg.h"
 
 extern FuncItem funcItem[nbFunc];
 extern NppData nppData;
 extern bool doCloseTag;
 
-extern DemoDlg _goToLine;
+extern CmdDlg _goToLine;
 
 BOOL APIENTRY DllMain( HANDLE hModule, 
                        DWORD  reasonForCall, 

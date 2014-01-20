@@ -22,7 +22,7 @@
 // put the headers you need here
 //
 #include <Shlwapi.h>
-#include "GoToLineDlg.h"
+#include "CmdDlg.h"
 #include "goCommands/goCommand.h"
 #include "goCommands/goRUN.h"
 
@@ -30,7 +30,7 @@ const TCHAR sectionName[] = TEXT("Insert Extesion");
 const TCHAR keyName[] = TEXT("doCloseTag");
 const TCHAR configFileName[] = TEXT("pluginDemo.ini");
 
-DemoDlg _goToLine;
+CmdDlg _cmdDlg;
 
 #ifdef UNICODE 
 	#define generic_itoa _itow
@@ -110,7 +110,7 @@ BOOL initialize_go_cmd(){
 void pluginInit(HANDLE hModule)
 {
 	// Initialize dockable demo dialog
-	_goToLine.init((HINSTANCE)hModule, NULL);
+	_cmdDlg.init((HINSTANCE)hModule, NULL);
 	GO_CMD_FOUND = initialize_go_cmd();
 }
 
@@ -178,7 +178,7 @@ void commandMenuInit()
 
 	setCommand(3, TEXT("go run"), go_run, runKey, false);
 
-	setCommand(DOCKABLE_DEMO_INDEX, TEXT("show output window"), DockableDlgDemo, NULL, false);
+	setCommand(DOCKABLE_DEMO_INDEX, TEXT("show output window"), CmdDlgShow, NULL, false);
 }
 
 
@@ -265,27 +265,27 @@ DWORD run_go_tool(goCommand *goCmd){
 	::SendMessage(nppData._nppHandle, NPPM_GETFULLCURRENTPATH, MAX_PATH, (LPARAM) path);
 	::SendMessage(nppData._nppHandle, NPPM_SAVEALLFILES, 0, 0);
 
-	 DockableDlgDemo();
+	 CmdDlgShow();
 
 	if ( ! goCmd->InitialiseCmd(GO_CMD, path)){
 		::MessageBox(nppData._nppHandle, TEXT("failed to create commandline"), TEXT("E R R O R"), MB_OK);
 		return FALSE;
 	}
-	_goToLine.setText(goCmd->GetCommand());
+	_cmdDlg.setText(goCmd->GetCommand());
 	goCmd->RunCmd();
 	if(goCmd->HasStdOut()){
 		LPTSTR stdOut = goCmd->GetstdOut();
-		_goToLine.appendText(stdOut);
+		_cmdDlg.appendText(stdOut);
 		free(stdOut);
 	}
 
 	if(goCmd->HasStdErr()){
 		LPTSTR stdErr = goCmd->GetstdErr();
-		_goToLine.appendText(stdErr);
+		_cmdDlg.appendText(stdErr);
 		free(stdErr);
 	}
 	if (! goCmd->HasStdErr() && ! goCmd->HasStdOut()){
-		_goToLine.display(false);
+		_cmdDlg.display(false);
 	} else {
 		::SetFocus(nppData._nppHandle);
 	}
@@ -300,7 +300,7 @@ void go_fmt(void)
 	if ( ! run_go_tool(goCmd)) return;
 
 	if( ! goCmd->exitStatus){
-		if (reload_all_files())	_goToLine.display(false);
+		if (reload_all_files())	_cmdDlg.display(false);
 	}
 	delete(goCmd);
 }
@@ -342,32 +342,25 @@ void go_run(void)
 }
 
 
-
-// Dockable Dialog Demo
-// 
-// This demonstration shows you how to do a dockable dialog.
-// You can create your own non dockable dialog - in this case you don't nedd this demonstration.
-// You have to create your dialog by inherented DockingDlgInterface class in order to make your dialog dockable
-// - please see DemoDlg.h and DemoDlg.cpp to have more informations.
-void DockableDlgDemo()
+void CmdDlgShow()
 {
-	_goToLine.setParent(nppData._nppHandle);
+	_cmdDlg.setParent(nppData._nppHandle);
 	tTbData	data = {0};
 
-	if (!_goToLine.isCreated())
+	if (!_cmdDlg.isCreated())
 	{
-		_goToLine.create(&data);
+		_cmdDlg.create(&data);
 
 		// define the default docking behaviour
 		data.uMask = DWS_DF_CONT_RIGHT;
 
-		data.pszModuleName = _goToLine.getPluginFileName();
+		data.pszModuleName = _cmdDlg.getPluginFileName();
 
 		// the dlgDlg should be the index of funcItem where the current function pointer is
 		// in this case is DOCKABLE_DEMO_INDEX
 		data.dlgID = DOCKABLE_DEMO_INDEX;
 		::SendMessage(nppData._nppHandle, NPPM_DMMREGASDCKDLG, 0, (LPARAM)&data);
 	}
-	_goToLine.display();
+	_cmdDlg.display();
 }
 

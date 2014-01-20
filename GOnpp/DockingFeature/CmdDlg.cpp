@@ -15,12 +15,12 @@
 //along with this program; if not, write to the Free Software
 //Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-#include "GoToLineDlg.h"
+#include "CmdDlg.h"
 #include "PluginDefinition.h"
 
 extern NppData nppData;
 
-BOOL CALLBACK DemoDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam)
+BOOL CALLBACK CmdDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message) 
 	{
@@ -47,14 +47,14 @@ BOOL CALLBACK DemoDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam)
 	}
 }
 
-void DemoDlg::reshape(int width)
+void CmdDlg::reshape(int width)
 {
 	RECT rc;
 	::GetWindowRect(_hSelf, &rc);
 	::MoveWindow(_hSelf, rc.top, rc.left, width, rc.bottom - rc.top, TRUE);
 }
 
-LPTSTR DemoDlg::prettyfy(LPTSTR text)
+LPTSTR CmdDlg::prettyfy(LPTSTR text)
 {
 	size_t size = _tcslen(text) + 50;
 	LPTSTR res = (LPTSTR) calloc(size+1, sizeof(TCHAR));
@@ -80,7 +80,7 @@ LPTSTR DemoDlg::prettyfy(LPTSTR text)
 }
 
 
-void DemoDlg::setText(LPTSTR text)
+void CmdDlg::setText(LPTSTR text)
 {
 	LPTSTR lines = prettyfy(text);
 	if ( lines == NULL) return;
@@ -89,7 +89,7 @@ void DemoDlg::setText(LPTSTR text)
 	free(lines);
 }
 
-void DemoDlg::appendText(LPTSTR text)
+void CmdDlg::appendText(LPTSTR text)
 {
 	LPTSTR pText = this->prettyfy(text);
 	if ( pText == NULL) return;

@@ -74,7 +74,7 @@ void go_fmt(void);
 void go_test(void);
 void go_install(void);
 void go_run(void);
-void DockableDlgDemo();
+void CmdDlgShow();
 
 
 #endif //PLUGINDEFINITION_H
