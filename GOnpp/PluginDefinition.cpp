@@ -136,6 +136,7 @@ void pluginInit(HANDLE hModule)
 void pluginCleanUp()
 {
 	::WritePrivateProfileString(sectionName, keyName, doCloseTag?TEXT("1"):TEXT("0"), iniFilePath);
+	_cmdDlg.destroy();
 	free(GO_CMD);
 }
 
