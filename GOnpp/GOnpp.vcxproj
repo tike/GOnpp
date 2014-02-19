@@ -208,6 +208,7 @@
   <ItemGroup>
     <ClInclude Include="DockingFeature\DockingDlgInterface.h" />
     <ClInclude Include="DockingFeature\CmdDlg.h" />
+    <ClInclude Include="ErrorMessages.h" />
     <ClInclude Include="FileUtils.h" />
     <ClInclude Include="goCommands\CommandExec.h" />
     <ClInclude Include="goCommands\goCommand.h" />

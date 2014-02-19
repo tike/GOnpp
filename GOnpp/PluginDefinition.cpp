@@ -33,6 +33,7 @@
 
 #include "PluginDefinition.h"
 #include "menuCmdID.h"
+#include "ErrorMessages.h"
 
 //
 // put the headers you need here
@@ -93,28 +94,42 @@ BOOL initialize_go_cmd(){
 		return FALSE;
 	}
 
+	// if GOBIN is set set assume that go.exe is there
 	DWORD length = GetEnvironmentVariable(_TEXT("GOBIN"), raw_goroot, MAX_ENVIRON);
 	if (length != 0){
 		if (PathCombine(GO_CMD, raw_goroot, TEXT("go.exe")) == NULL) return FALSE;
 		PathQuoteSpaces(GO_CMD);
+
+		free(raw_goroot);
 		return TRUE;
 	}
 	
+	// if GOROOT is set assume that go.exe is there
 	length = GetEnvironmentVariable(_TEXT("GOROOT"), raw_goroot, MAX_ENVIRON);
-	if (length == 0){
-		if (GetLastError() == ERROR_ENVVAR_NOT_FOUND){
-			::MessageBox(nppData._nppHandle,
-				TEXT("GOnpp can't find neither your GOROOT nor your GOBIN environment variable!\n \
-						Set it and restart notepad++ to use GOnpp."),
-				TEXT("GOROOT/GOBIN not found!"),
-				MB_OK);
-		}
+	if (length != 0){
+		if (PathCombine(GO_CMD, raw_goroot, TEXT("bin\\go.exe")) == NULL) return FALSE;
+		PathQuoteSpaces(GO_CMD);
+
 		free(raw_goroot);
-		return FALSE;
+		return TRUE;
 	}
-	
-	if (PathCombine(GO_CMD, raw_goroot, TEXT("bin\\go.exe")) == NULL) return FALSE;
-	PathQuoteSpaces(GO_CMD);
+
+	// if neither is set, pray that go.exe is somewhere on the path
+	if (GetLastError() == ERROR_ENVVAR_NOT_FOUND){
+		GO_CMD = _T("go.exe");
+		free(raw_goroot);
+
+		CommandExec c = CommandExec(GO_CMD, _T(""));
+		BOOL start = c.Start();
+		BOOL end = c.Wait();
+		DWORD status = c.ExitStatus();
+		if ( ! start && ! end && status ){
+			::MessageBox(nppData._nppHandle,
+				NO_GO_EXE_ERROR), 
+				_T("go configuration error"), MB_OK | MB_ICONERROR);
+		}
+		return TRUE;
+	}
 	
 	free(raw_goroot);
 	return TRUE;
