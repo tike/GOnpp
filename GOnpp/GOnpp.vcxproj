@@ -197,6 +197,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DockingFeature\CmdDlg.cpp" />
+    <ClCompile Include="FileUtils.cpp" />
     <ClCompile Include="goCommands\CommandExec.cpp" />
     <ClCompile Include="goCommands\goCommand.cpp" />
     <ClCompile Include="goCommands\goRUN.cpp" />
@@ -207,6 +208,7 @@
   <ItemGroup>
     <ClInclude Include="DockingFeature\DockingDlgInterface.h" />
     <ClInclude Include="DockingFeature\CmdDlg.h" />
+    <ClInclude Include="FileUtils.h" />
     <ClInclude Include="goCommands\CommandExec.h" />
     <ClInclude Include="goCommands\goCommand.h" />
     <ClInclude Include="goCommands\goRUN.h" />

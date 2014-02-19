@@ -39,6 +39,7 @@
 //
 #include <Shlwapi.h>
 #include "CmdDlg.h"
+#include "FileUtils.h"
 #include "goCommands/goCommand.h"
 #include "goCommands/goRUN.h"
 
@@ -230,68 +231,24 @@ bool setCommand(size_t index, TCHAR *cmdName, PFUNCPLUGINCMD pFunc, ShortcutKey 
     return true;
 }
 
-// checks the current files extention and compares it to ".go"
-// returns TRUE on match, FALSE otherwise
-BOOL is_go_file(void){
-	TCHAR ext[MAX_PATH];
-	
-	// Check wether current file is a .go file
-	::SendMessage(nppData._nppHandle, NPPM_GETEXTPART, 0, (LPARAM)ext);
-	if (_tcscmp(ext, TEXT(".go")) != 0){
-		return FALSE;
-	}
-	return TRUE;
-}
 
-// reloads all open files
-// TODO: make this check the extension and only reload .go files
-BOOL reload_all_files(void){
-	int num_files = ::SendMessage(nppData._nppHandle, NPPM_GETNBOPENFILES, 0, ALL_OPEN_FILES);
-		
-	TCHAR **file_names = (TCHAR**) calloc(num_files, sizeof(TCHAR*));
-	if (file_names == NULL) return FALSE;
-
-	int i = 0;
-	for (i=0; i<num_files; i++){
-		file_names[i] = (TCHAR*) calloc(MAX_PATH, sizeof(TCHAR));
-		if (file_names[i] == NULL) return FALSE;
-	}
-
-	if ( num_files != ::SendMessage(nppData._nppHandle, NPPM_GETOPENFILENAMES, (WPARAM) file_names, num_files)){
-		return FALSE;
-	}
-
-		
-	for ( i=0; i<num_files; i++){
-		TCHAR curr_file[MAX_PATH];
-		_tcsncpy(curr_file, file_names[i], MAX_PATH);
-		::SendMessage(nppData._nppHandle, NPPM_RELOADFILE, FALSE, (LPARAM) curr_file);
-	}
-		
-	for (i=0; i<num_files; i++){
-		free(file_names[i]);
-	}
-	free(file_names);
-
-	return TRUE;
-}
 
 
 // To keep the goCmd class clean of notepad++ specific commands, 
 // notepad++ specific preparations (saving open files, etc) are done here
 // 
 DWORD run_go_tool(goCommand *goCmd){
-	if ( !GO_CMD_FOUND || !is_go_file()){
+	if ( !GO_CMD_FOUND || !current_file_is_go_file(nppData)){
 		return FALSE;
 	}
 	
-	TCHAR path[MAX_PATH];
-	::SendMessage(nppData._nppHandle, NPPM_GETFULLCURRENTPATH, MAX_PATH, (LPARAM) path);
+	TCHAR full_current_file[MAX_PATH];
+	::SendMessage(nppData._nppHandle, NPPM_GETFULLCURRENTPATH, MAX_PATH, (LPARAM) full_current_file);
 	::SendMessage(nppData._nppHandle, NPPM_SAVEALLFILES, 0, 0);
 
 	 CmdDlgShow();
 
-	if ( ! goCmd->InitialiseCmd(GO_CMD, path)){
+	if ( ! goCmd->InitialiseCmd(GO_CMD, full_current_file)){
 		::MessageBox(nppData._nppHandle, TEXT("failed to create commandline"), TEXT("E R R O R"), MB_OK);
 		return FALSE;
 	}
@@ -310,9 +267,9 @@ DWORD run_go_tool(goCommand *goCmd){
 	}
 	if (! goCmd->HasStdErr() && ! goCmd->HasStdOut()){
 		_cmdDlg.display(false);
-	} else {
-		::SetFocus(nppData._nppHandle);
-	}
+	} 
+	::SendMessage(nppData._nppHandle, NPPM_SWITCHTOFILE, 0, (LPARAM) full_current_file);
+	
 	return TRUE;
 }
 
@@ -324,7 +281,7 @@ void go_fmt(void)
 	if ( ! run_go_tool(goCmd)) return;
 
 	if( ! goCmd->exitStatus){
-		if (reload_all_files())	_cmdDlg.display(false);
+		if (reload_all_files(nppData))	_cmdDlg.display(false);
 	}
 	delete(goCmd);
 }
