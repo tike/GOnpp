@@ -169,16 +169,17 @@ BOOL goCommand::initializeGoVals(void){
 		return FALSE;
 	}
 	
-	dir = _tcstok_s(dir, pathSep, &pkg);
+	dir = _tcstok(dir, pathSep);
 	_tcsncpy(this->goPath, dir, _tcslen(dir)+1);
 	while(dir != NULL){
+		pkg = dir + _tcslen(dir) + 1;
 		if (_tcscmp(dir, TEXT("src")) == 0){
 			_tcsncpy(this->goPkg, pkg, _tcslen(pkg)+1);
 			free(start_address);
 			return TRUE;
 		}
 		PathAppend(this->goPath, dir);
-		dir = _tcstok_s(NULL, pathSep, &pkg);
+		dir = _tcstok(NULL, pathSep);
 	}
 	free(start_address);
 	return FALSE;

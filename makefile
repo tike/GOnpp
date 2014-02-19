@@ -38,8 +38,8 @@ WINDRES =  windres -O coff
 CFLAGS  =  -O2 -mtune=i686 -DBUILD_DLL -W -Wall -gstabs -mwindows \
            $(foreach dir,$(SRC_DIRS),-I$(dir)) \
            -DUNICODE -D_UNICODE
-LIBS    =  -lws2_32 -lz -lm -Wl,-Map,$@.map,--cref -static-libgcc
-LDFLAGS =  -Wl,--out-implib,$(TARGET) -shared -lshlwapi $(CFLAGS)
+LIBS    =  -lws2_32 -lm -Wl,-Map,$@.map,--cref -static-libgcc -lshlwapi
+LDFLAGS =  -Wl,--out-implib,$(TARGET) -shared $(CFLAGS)
 OBJDIR  =  .objs
 
 #INSTALL_PATH = "C:\\Program Files\\Notepad++\\plugins\\"
@@ -92,9 +92,9 @@ $(OBJDIR)/%.o: %.cpp
 
 $(TARGET): $(OBJS)
 	@echo Linking $@
-	@$(CC) -o $@ $(LDFLAGS) $(OBJS) $(LIBS)
+	@$(CXX) -o $@ $(LDFLAGS) $(OBJS) $(LIBS)
 
-$(OBJDIR)/%.res: %.rc %.ico %.h
+$(OBJDIR)/GOnpp/DockingFeature/goLine.res: GOnpp/DockingFeature/goLine.rc GOnpp/DockingFeature/resource.h
 	@$(call MKDIR-P,$(call dirname,$@))
 	@$(WINDRES) -o $@ $<
 
