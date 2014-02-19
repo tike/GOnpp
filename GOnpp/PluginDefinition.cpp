@@ -44,7 +44,7 @@
 
 const TCHAR sectionName[] = TEXT("Insert Extesion");
 const TCHAR keyName[] = TEXT("doCloseTag");
-const TCHAR configFileName[] = TEXT("pluginDemo.ini");
+const TCHAR configFileName[] = TEXT("GOnpp.ini");
 
 CmdDlg _cmdDlg;
 
@@ -74,17 +74,17 @@ bool doCloseTag = false;
 LPTSTR GO_CMD = NULL;
 BOOL GO_CMD_FOUND = FALSE;
 
-//
-// Initialize your plugin data here
-// It will be called while plugin loading
+// initialize the GO_CMD variable to hold the path for go.exe
 BOOL initialize_go_cmd(){
+	// allocate string to hold value obtained from environment variable
 	LPTSTR raw_goroot = (LPTSTR) calloc(MAX_ENVIRON, sizeof(TCHAR));
 	if (raw_goroot == NULL){
 		::MessageBox(nppData._nppHandle, TEXT("Out of memory, fuck!"), TEXT("E R R O R"), MB_OK);
 		return FALSE;
 	}
 
-	// we add one for the NULL here...
+	// allocate memory to hold string "xyz\bin\go.exe"
+	// will be freed in pluginCleanUp
 	GO_CMD = (LPTSTR) calloc(MAX_PATH, sizeof(TCHAR));
 	if (GO_CMD == NULL){
 		::MessageBox(nppData._nppHandle, TEXT("Out of memory, fuck!"), TEXT("E R R O R"), MB_OK);
@@ -105,7 +105,7 @@ BOOL initialize_go_cmd(){
 			::MessageBox(nppData._nppHandle,
 				TEXT("GOnpp can't find neither your GOROOT nor your GOBIN environment variable!\n \
 						Set it and restart notepad++ to use GOnpp."),
-				TEXT("GOROOT not found!"),
+				TEXT("GOROOT/GOBIN not found!"),
 				MB_OK);
 		}
 		free(raw_goroot);
@@ -164,7 +164,7 @@ void commandMenuInit()
 	// get the parameter value from plugin config
 	doCloseTag = (::GetPrivateProfileInt(sectionName, keyName, 0, iniFilePath) != 0);
 
-		ShortcutKey *fmtKey = new ShortcutKey;
+	ShortcutKey *fmtKey = new ShortcutKey;
 	fmtKey->_isAlt = true;
 	fmtKey->_isCtrl = false;
 	fmtKey->_isShift = false;
@@ -230,7 +230,8 @@ bool setCommand(size_t index, TCHAR *cmdName, PFUNCPLUGINCMD pFunc, ShortcutKey 
     return true;
 }
 
-
+// checks the current files extention and compares it to ".go"
+// returns TRUE on match, FALSE otherwise
 BOOL is_go_file(void){
 	TCHAR ext[MAX_PATH];
 	
@@ -242,6 +243,8 @@ BOOL is_go_file(void){
 	return TRUE;
 }
 
+// reloads all open files
+// TODO: make this check the extension and only reload .go files
 BOOL reload_all_files(void){
 	int num_files = ::SendMessage(nppData._nppHandle, NPPM_GETNBOPENFILES, 0, ALL_OPEN_FILES);
 		
@@ -273,6 +276,10 @@ BOOL reload_all_files(void){
 	return TRUE;
 }
 
+
+// To keep the goCmd class clean of notepad++ specific commands, 
+// notepad++ specific preparations (saving open files, etc) are done here
+// 
 DWORD run_go_tool(goCommand *goCmd){
 	if ( !GO_CMD_FOUND || !is_go_file()){
 		return FALSE;
