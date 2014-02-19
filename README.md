@@ -25,7 +25,3 @@ Plans for Version 1.x
 * Offer running produced executables (after install).
 * Refine the GOPATH checking to allow configurable appending or replacing.
 * Allow setting of GOOS and GOARCH from within Notepad++
-
-TODO
-----
-* make the grey box of the non-docked dialog that occurs upon running fmt cmd disappear
