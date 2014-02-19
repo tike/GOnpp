@@ -31,10 +31,21 @@
 //along with this program; if not, write to the Free Software
 //Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+#include <string>
 #include "CmdDlg.h"
 #include "PluginDefinition.h"
 
 extern NppData nppData;
+
+typedef std::basic_string<TCHAR> tstring;
+
+#ifdef max
+#undef max
+#endif
+
+#ifdef min
+#undef min
+#endif
 
 BOOL CALLBACK CmdDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -72,29 +83,32 @@ void CmdDlg::reshape(int width)
 
 LPTSTR CmdDlg::prettyfy(LPTSTR text)
 {
-	size_t size = _tcslen(text) + 50;
-	LPTSTR res = (LPTSTR) calloc(size+1, sizeof(TCHAR));
-	
-	LPTSTR rest = NULL;
-	LPTSTR current = _tcstok_s(text, _T("\n"), &rest);
-	while(current != NULL){
-		if (_tcslen(current) > _maxLine){
-			_maxLine = _tcslen(current);
-		}
-		if( _tcslen(current) > size - _tcslen(res)){
-			size += 500;
-			res = (LPTSTR) realloc(res, size * sizeof(TCHAR));
-			if (res == NULL){
-				return NULL;
+	try {
+		tstring src = tstring(text);
+		tstring dst;
+		tstring::size_type i = 0;
+		for (;;) {
+			const tstring::size_type j = src.find(_T("\n"), i);
+			dst.append(src, i, j-i);
+			dst.append(_T("\r\n"));
+			_maxLine = std::max(_maxLine, std::min(j-i, src.length()-i));
+			if (j == tstring::npos) {
+				break;
 			}
+			i = j+1;
 		}
-		_tcsncat(res, current, __min(size -_tcslen(res), _tcslen(current)));
-		_tcsncat(res, _T("\r\n"), __min(size - _tcslen(res), 2 * sizeof(TCHAR)));
-		current = _tcstok_s(NULL, _T("\n"), &rest);
-	}
-	return res;
-}
 
+		LPTSTR res = (LPTSTR) calloc(dst.length()+1, sizeof(TCHAR));
+		if (res == NULL) {
+			return NULL;
+		}
+		dst.copy(res, dst.length());
+		res[dst.length()] = TCHAR(0);
+		return res;
+	} catch (...) {
+		return NULL;
+	}
+}
 
 void CmdDlg::setText(LPTSTR text)
 {

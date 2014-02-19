@@ -14,8 +14,12 @@
 //along with this program; if not, write to the Free Software
 //Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+#include <algorithm>
 #include "CommandExec.h"
 
+#ifdef min
+#undef min
+#endif
 
 CommandExec::CommandExec(LPCTSTR cmd, LPCTSTR dir)
 {
@@ -151,7 +155,7 @@ BOOL CommandExec::readOutput(HANDLE handle, LPTSTR* output){
 			}
 		}
 		
-		_tcsncat(*output, TBuf, __min(BUFSIZE, outputLen - _tcslen(*output))); 
+		_tcsncat(*output, TBuf, std::min<DWORD>(BUFSIZE, outputLen - _tcslen(*output))); 
 	}
 	return TRUE;
 }
@@ -204,8 +208,8 @@ LPTSTR CommandExec::GetCombined()
 	LPTSTR out = (LPTSTR) calloc(length + 1, sizeof(TCHAR));
 	if (*out == NULL) return NULL;
 	
-	_tcsncat(out, stdOut, __min(_tcslen(stdOut), length - _tcslen(out)));
-	_tcsncat(out, stdErr, __min(_tcslen(stdErr), length - _tcslen(out)));
+	_tcsncat(out, stdOut, std::min(_tcslen(stdOut), length - _tcslen(out)));
+	_tcsncat(out, stdErr, std::min(_tcslen(stdErr), length - _tcslen(out)));
 
 	return out;
 }

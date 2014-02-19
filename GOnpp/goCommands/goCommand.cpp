@@ -14,8 +14,13 @@
 //along with this program; if not, write to the Free Software
 //Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+#include <algorithm>
 #include "goCommand.h"
 #include <shlwapi.h>
+
+#ifdef min
+#undef min
+#endif
 
 goCommand::goCommand(LPCTSTR cmd, LPCTSTR flags)
 {
@@ -132,7 +137,7 @@ BOOL goCommand::initializeFileVals(LPTSTR current_file)
 {
 	this->currentFile = (LPTSTR) calloc(MAX_PATH, sizeof(TCHAR));
 	if (this->currentFile == NULL) return FALSE;
-	_tcsncpy(this->currentFile, current_file, __min(MAX_PATH, _tcslen(current_file)));
+	_tcsncpy(this->currentFile, current_file, std::min<size_t>(MAX_PATH, _tcslen(current_file)));
 
 	this->currentDir = (LPTSTR) _tcsdup(this->currentFile);
 	if (this->currentDir == NULL) return FALSE;
@@ -193,11 +198,11 @@ BOOL goCommand::combineCommandLine(LPCTSTR go_cmd, LPTSTR pkg)
 	LPTSTR args = (LPTSTR) calloc(size + 1, sizeof(TCHAR));
 	if (args == NULL) return FALSE;
 
-	_tcsncat(args, go_cmd, __min(_tcslen(go_cmd), size - _tcslen(args)));
-	_tcsncat(args, _T(" "), __min(sizeof(args), size - _tcslen(args)));
-	_tcsncat(args, cmd, __min( _tcslen(cmd), size -_tcslen(args)));
-	_tcsncat(args, _T(" "), __min(sizeof(args), size - _tcslen(args)));
-	_tcsncat(args, pkg, __min( _tcslen(pkg), size -_tcslen(args)));
+	_tcsncat(args, go_cmd, std::min(_tcslen(go_cmd), size - _tcslen(args)));
+	_tcsncat(args, _T(" "), std::min(sizeof(args), size - _tcslen(args)));
+	_tcsncat(args, cmd, std::min( _tcslen(cmd), size -_tcslen(args)));
+	_tcsncat(args, _T(" "), std::min(sizeof(args), size - _tcslen(args)));
+	_tcsncat(args, pkg, std::min( _tcslen(pkg), size -_tcslen(args)));
 
 	this->commandLine = args;
 	return TRUE;

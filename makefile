@@ -36,7 +36,8 @@ CC      =  $(ARCH)-gcc
 CXX     =  $(ARCH)-g++
 WINDRES =  windres -O coff
 CFLAGS  =  -O2 -mtune=i686 -DBUILD_DLL -W -Wall -gstabs -mwindows \
-           $(foreach dir,$(SRC_DIRS),-I$(dir))
+           $(foreach dir,$(SRC_DIRS),-I$(dir)) \
+           -DUNICODE -D_UNICODE
 LIBS    =  -lws2_32 -lz -lm -Wl,-Map,$@.map,--cref -static-libgcc
 LDFLAGS =  -Wl,--out-implib,$(TARGET) -shared -lshlwapi $(CFLAGS)
 OBJDIR  =  .objs
