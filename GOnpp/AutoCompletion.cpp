@@ -29,6 +29,9 @@ extern CmdDlg _cmdDlg;
 bool AutoCompletion::on_char_added(int c)
 {
 	_cmdDlg.setText(tstring(1, c));
-//	_cmdDlg.show(_nppData._nppHandle, 4); // TMP! 4=DOCKABLE_DEMO_INDEX
+	switch (c) {
+	case '.':
+		::SendMessage(_nppData._scintillaMainHandle, SCI_AUTOCSHOW, 0, (LPARAM)"foo bar baz");
+	}
 	return false;
 }
