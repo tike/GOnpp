@@ -34,12 +34,14 @@
 #include "PluginDefinition.h"
 #include <shlwapi.h>
 #include "CmdDlg.h"
+#include "AutoCompletion.h"
 
 extern FuncItem funcItem[nbFunc];
 extern NppData nppData;
 extern bool doCloseTag;
 
 extern CmdDlg _cmdDlg;
+AutoCompletion autoCompletion;
 
 BOOL APIENTRY DllMain( HANDLE hModule, 
                        DWORD  reasonForCall, 
@@ -106,7 +108,13 @@ extern "C" __declspec(dllexport) void beNotified(SCNotification *notifyCode)
 // http://sourceforge.net/forum/forum.php?forum_id=482781
 //
 extern "C" __declspec(dllexport) LRESULT messageProc(UINT Message, WPARAM wParam, LPARAM lParam)
-{/*
+{
+	MessageProcessed processed;
+	processed = autoCompletion.ProcessMessage(Message, wParam, lParam);
+	if (processed) {
+		return processed.result;
+	}
+/*
 	if (Message == WM_MOVE)
 	{
 		::MessageBox(NULL, "move", "", MB_OK);

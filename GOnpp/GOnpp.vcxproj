@@ -196,6 +196,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AutoCompletion.cpp" />
     <ClCompile Include="DockingFeature\CmdDlg.cpp" />
     <ClCompile Include="FileUtils.cpp" />
     <ClCompile Include="goCommands\CommandExec.cpp" />
@@ -206,6 +207,7 @@
     <ClCompile Include="DockingFeature\StaticDialog.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AutoCompletion.h" />
     <ClInclude Include="DockingFeature\DockingDlgInterface.h" />
     <ClInclude Include="DockingFeature\CmdDlg.h" />
     <ClInclude Include="ErrorMessages.h" />
