@@ -52,10 +52,12 @@ public :
 
 	void setText(LPTSTR text);
 	void appendText(LPTSTR text);
-	LPTSTR prettyfy(LPTSTR text);
+
+	void show(HWND parent, int dialogID);
 
 protected :
 	virtual BOOL CALLBACK run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam);
+	LPTSTR prettyfy(LPTSTR text);
 	void reshape(int width);
 	unsigned int _maxLine;
 private :

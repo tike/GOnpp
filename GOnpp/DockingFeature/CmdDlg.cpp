@@ -134,3 +134,24 @@ void CmdDlg::appendText(LPTSTR text)
       SendMessage (hEdit, EM_REPLACESEL, 0, (LPARAM) ((LPSTR) pText));
 	  free(pText);
 }
+
+void CmdDlg::show(HWND parent, int dialogID)
+{
+	setParent(parent);
+
+	if (!isCreated())
+	{
+		tTbData	data = {0};
+		create(&data);
+
+		// define the default docking behaviour
+		data.uMask = DWS_DF_CONT_RIGHT;
+
+		data.pszModuleName = getPluginFileName();
+
+		data.dlgID = dialogID;
+		::SendMessage(parent, NPPM_DMMREGASDCKDLG, 0, (LPARAM)&data);
+	}
+	display();
+}
+

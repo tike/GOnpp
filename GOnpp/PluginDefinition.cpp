@@ -329,26 +329,9 @@ void go_run(void)
 	if ( ! run_go_tool(goCmd)) return;
 }
 
-
 void CmdDlgShow()
 {
-	_cmdDlg.setParent(nppData._nppHandle);
-	tTbData	data = {0};
-
-	if (!_cmdDlg.isCreated())
-	{
-		_cmdDlg.create(&data);
-
-		// define the default docking behaviour
-		data.uMask = DWS_DF_CONT_RIGHT;
-
-		data.pszModuleName = _cmdDlg.getPluginFileName();
-
-		// the dlgDlg should be the index of funcItem where the current function pointer is
-		// in this case is DOCKABLE_DEMO_INDEX
-		data.dlgID = DOCKABLE_DEMO_INDEX;
-		::SendMessage(nppData._nppHandle, NPPM_DMMREGASDCKDLG, 0, (LPARAM)&data);
-	}
-	_cmdDlg.display();
+	// the dlgDlg should be the index of funcItem where the current function pointer is
+	// in this case is DOCKABLE_DEMO_INDEX
+	_cmdDlg.show(nppData._nppHandle, DOCKABLE_DEMO_INDEX);
 }
-
