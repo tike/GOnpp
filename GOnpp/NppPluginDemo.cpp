@@ -31,6 +31,7 @@
 //along with this program; if not, write to the Free Software
 //Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+#include <memory>
 #include "PluginDefinition.h"
 #include <shlwapi.h>
 #include "CmdDlg.h"
@@ -41,7 +42,7 @@ extern NppData nppData;
 extern bool doCloseTag;
 
 extern CmdDlg _cmdDlg;
-AutoCompletion autocompletion;
+extern std::auto_ptr<AutoCompletion> autocompletion;
 
 BOOL APIENTRY DllMain( HANDLE hModule, 
                        DWORD  reasonForCall, 
@@ -88,7 +89,7 @@ extern "C" __declspec(dllexport) FuncItem * getFuncsArray(int *nbF)
 
 extern "C" __declspec(dllexport) void beNotified(SCNotification *notifyCode)
 {
-	if (autocompletion.process_notification(*notifyCode)) {
+	if (autocompletion->process_notification(*notifyCode)) {
 		return;
 	}
 

@@ -1,7 +1,12 @@
 #include "AutoCompletion.h"
 
+#include "PluginInterface.h"
+#include "Scintilla.h"
 
-AutoCompletion::AutoCompletion()
+#include "CmdDlg.h"
+
+AutoCompletion::AutoCompletion(const NppData &nppData)
+	: _nppData(nppData)
 {
 }
 
@@ -19,7 +24,11 @@ bool AutoCompletion::process_notification(SCNotification &n)
 	return false;
 }
 
+extern CmdDlg _cmdDlg;
+
 bool AutoCompletion::on_char_added(int c)
 {
+	_cmdDlg.setText(tstring(1, c));
+//	_cmdDlg.show(_nppData._nppHandle, 4); // TMP! 4=DOCKABLE_DEMO_INDEX
 	return false;
 }

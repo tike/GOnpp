@@ -38,17 +38,20 @@
 //
 // put the headers you need here
 //
+#include <memory>
 #include <Shlwapi.h>
 #include "CmdDlg.h"
 #include "FileUtils.h"
 #include "goCommands/goCommand.h"
 #include "goCommands/goRUN.h"
+#include "AutoCompletion.h"
 
 const TCHAR sectionName[] = TEXT("Insert Extesion");
 const TCHAR keyName[] = TEXT("doCloseTag");
 const TCHAR configFileName[] = TEXT("GOnpp.ini");
 
 CmdDlg _cmdDlg;
+std::auto_ptr<AutoCompletion> autocompletion;
 
 #ifdef UNICODE 
 	#define generic_itoa _itow
@@ -144,6 +147,7 @@ void pluginInit(HANDLE hModule)
 	// Initialize dockable demo dialog
 	_cmdDlg.init((HINSTANCE)hModule, NULL);
 	GO_CMD_FOUND = initialize_go_cmd();
+	autocompletion.reset(new AutoCompletion(nppData));
 }
 
 //
@@ -152,6 +156,7 @@ void pluginInit(HANDLE hModule)
 void pluginCleanUp()
 {
 	::WritePrivateProfileString(sectionName, keyName, doCloseTag?TEXT("1"):TEXT("0"), iniFilePath);
+	autocompletion.reset();
 	_cmdDlg.destroy();
 	free(GO_CMD);
 }

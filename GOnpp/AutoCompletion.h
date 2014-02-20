@@ -1,16 +1,20 @@
 #pragma once
 
-#include "Scintilla.h"
+class NppData;
+class SCNotification;
 
 class AutoCompletion
 {
 public:
-	AutoCompletion();
+	AutoCompletion(const NppData &);
 	~AutoCompletion();
 
 	bool process_notification(SCNotification &n);
 
 protected:
 	bool on_char_added(int c);
+
+private:
+	const NppData &_nppData;
 };
 
