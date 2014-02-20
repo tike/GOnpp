@@ -52,8 +52,6 @@ public:
 
 		// additional info
 		data->pszAddInfo	= NULL;
-		_data = data;
-
 	};
 
 	virtual void updateDockingDlg(void) {
@@ -113,7 +111,6 @@ protected :
 	
 	// Handles
     HWND			_HSource;
-	tTbData*		_data;
 	int				_dlgID;
 	bool            _isFloating;
 	TCHAR            _moduleName[MAX_PATH];
