@@ -207,6 +207,7 @@
     <ClCompile Include="goCommands\goCommand.cpp" />
     <ClCompile Include="goCommands\goRUN.cpp" />
     <ClCompile Include="NppPluginDemo.cpp" />
+    <ClCompile Include="NppWrapper.cpp" />
     <ClCompile Include="PluginDefinition.cpp" />
     <ClCompile Include="DockingFeature\StaticDialog.cpp" />
   </ItemGroup>
@@ -221,6 +222,7 @@
     <ClInclude Include="goCommands\goRUN.h" />
     <ClInclude Include="menuCmdID.h" />
     <ClInclude Include="Notepad_plus_msgs.h" />
+    <ClInclude Include="NppWrapper.h" />
     <ClInclude Include="PluginDefinition.h" />
     <ClInclude Include="PluginInterface.h" />
     <ClInclude Include="DockingFeature\resource.h" />

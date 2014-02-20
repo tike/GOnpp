@@ -5,8 +5,8 @@
 
 #include "CmdDlg.h"
 
-AutoCompletion::AutoCompletion(const NppData &nppData)
-	: _nppData(nppData)
+AutoCompletion::AutoCompletion(NppWrapper npp)
+	: _npp(npp)
 {
 }
 
@@ -31,7 +31,7 @@ bool AutoCompletion::on_char_added(int c)
 	_cmdDlg.setText(tstring(1, c));
 	switch (c) {
 	case '.':
-		::SendMessage(_nppData._scintillaMainHandle, SCI_AUTOCSHOW, 0, (LPARAM)"foo bar baz");
+		_npp.send_scintilla(SCI_AUTOCSHOW, 0, (LPARAM)"foo bar baz");
 	}
 	return false;
 }

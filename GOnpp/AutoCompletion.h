@@ -1,12 +1,14 @@
 #pragma once
 
+#include "NppWrapper.h"
+
 class NppData;
 class SCNotification;
 
 class AutoCompletion
 {
 public:
-	AutoCompletion(const NppData &);
+	AutoCompletion(NppWrapper);
 	~AutoCompletion();
 
 	bool process_notification(SCNotification &n);
@@ -15,6 +17,6 @@ protected:
 	bool on_char_added(int c);
 
 private:
-	const NppData &_nppData;
+	NppWrapper _npp;
 };
 
