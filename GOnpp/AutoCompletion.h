@@ -1,26 +1,6 @@
 #pragma once
 
-#include <windows.h>
-
-struct MessageProcessed {
-	bool processed;
-	LRESULT result;
-
-	MessageProcessed()
-		: processed(0)
-		, result(0)
-	{ }
-
-	MessageProcessed(bool processed, LRESULT result)
-		: processed(processed)
-		, result(result)
-	{ }
-
-	operator bool ()
-	{
-		return processed;
-	}
-};
+#include "Scintilla.h"
 
 class AutoCompletion
 {
@@ -28,6 +8,9 @@ public:
 	AutoCompletion();
 	~AutoCompletion();
 
-	MessageProcessed ProcessMessage(UINT Message, WPARAM wParam, LPARAM lParam);
+	bool process_notification(SCNotification &n);
+
+protected:
+	bool on_char_added(int c);
 };
 

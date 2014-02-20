@@ -10,7 +10,16 @@ AutoCompletion::~AutoCompletion()
 {
 }
 
-MessageProcessed AutoCompletion::ProcessMessage(UINT msg, WPARAM wparam, LPARAM lparam)
+bool AutoCompletion::process_notification(SCNotification &n)
 {
-	return MessageProcessed(false, 0);
+	switch (n.nmhdr.code) {
+	case SCN_CHARADDED:
+		return on_char_added(n.ch);
+	}
+	return false;
+}
+
+bool AutoCompletion::on_char_added(int c)
+{
+	return false;
 }

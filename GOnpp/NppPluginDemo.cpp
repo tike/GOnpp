@@ -41,7 +41,7 @@ extern NppData nppData;
 extern bool doCloseTag;
 
 extern CmdDlg _cmdDlg;
-AutoCompletion autoCompletion;
+AutoCompletion autocompletion;
 
 BOOL APIENTRY DllMain( HANDLE hModule, 
                        DWORD  reasonForCall, 
@@ -88,6 +88,10 @@ extern "C" __declspec(dllexport) FuncItem * getFuncsArray(int *nbF)
 
 extern "C" __declspec(dllexport) void beNotified(SCNotification *notifyCode)
 {
+	if (autocompletion.process_notification(*notifyCode)) {
+		return;
+	}
+
 	switch (notifyCode->nmhdr.code) 
 	{
 		case NPPN_SHUTDOWN:
@@ -109,11 +113,6 @@ extern "C" __declspec(dllexport) void beNotified(SCNotification *notifyCode)
 //
 extern "C" __declspec(dllexport) LRESULT messageProc(UINT Message, WPARAM wParam, LPARAM lParam)
 {
-	MessageProcessed processed;
-	processed = autoCompletion.ProcessMessage(Message, wParam, lParam);
-	if (processed) {
-		return processed.result;
-	}
 /*
 	if (Message == WM_MOVE)
 	{
