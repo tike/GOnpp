@@ -36,6 +36,7 @@
 
 #include "DockingDlgInterface.h"
 #include "resource.h"
+#include "tstring.h"
 
 class CmdDlg : public DockingDlgInterface
 {
@@ -50,14 +51,16 @@ public :
 		_hParent = parent2set;
 	};
 
+	void setText(const tstring &text);
 	void setText(LPTSTR text);
+	void appendText(const tstring &text);
 	void appendText(LPTSTR text);
 
 	void show(HWND parent, int dialogID);
 
 protected :
 	virtual BOOL CALLBACK run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam);
-	LPTSTR prettyfy(LPTSTR text);
+	void prettify(tstring text);
 	void reshape(int width);
 	unsigned int _maxLine;
 private :

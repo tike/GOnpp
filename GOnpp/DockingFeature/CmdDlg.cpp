@@ -31,13 +31,11 @@
 //along with this program; if not, write to the Free Software
 //Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-#include <string>
 #include "CmdDlg.h"
 #include "PluginDefinition.h"
+#include "tstring.h"
 
 extern NppData nppData;
-
-typedef std::basic_string<TCHAR> tstring;
 
 #ifdef max
 #undef max
@@ -81,58 +79,55 @@ void CmdDlg::reshape(int width)
 	::MoveWindow(_hSelf, rc.top, rc.left, width, rc.bottom - rc.top, TRUE);
 }
 
-LPTSTR CmdDlg::prettyfy(LPTSTR text)
+void CmdDlg::prettify(tstring text)
 {
 	try {
-		tstring src = tstring(text);
-		tstring dst;
-		tstring::size_type i = 0;
-		for (;;) {
-			const tstring::size_type j = src.find(_T("\n"), i);
-			dst.append(src, i, j-i);
-			dst.append(_T("\r\n"));
-			_maxLine = std::max(_maxLine, std::min(j-i, src.length()-i));
-			if (j == tstring::npos) {
-				break;
-			}
-			i = j+1;
-		}
+		const tstring search(_T("\n")), replace(_T("\r\n"));
 
-		LPTSTR res = (LPTSTR) calloc(dst.length()+1, sizeof(TCHAR));
-		if (res == NULL) {
-			return NULL;
+		// http://stackoverflow.com/a/14678800/98528
+		tstring::size_type pos = 0;
+		while ((pos = text.find(search, pos)) != tstring::npos) {
+			text.replace(pos, search.length(), replace);
+			pos += replace.length();
 		}
-		dst.copy(res, dst.length());
-		res[dst.length()] = TCHAR(0);
-		return res;
 	} catch (...) {
-		return NULL;
+		text.clear();
 	}
 }
 
 void CmdDlg::setText(LPTSTR text)
 {
-	LPTSTR lines = prettyfy(text);
-	if ( lines == NULL) return;
+	setText(tstring(text));
+}
 
-	::SetDlgItemText(this->_hSelf, ID_DUMP, lines);
-	free(lines);
+void CmdDlg::setText(const tstring &text)
+{
+	tstring buf(text);
+	prettify(buf);
+	if (buf.empty()) {
+		return;
+	}
+
+	::SetDlgItemText(this->_hSelf, ID_DUMP, buf.c_str());
 }
 
 void CmdDlg::appendText(LPTSTR text)
 {
-	LPTSTR pText = this->prettyfy(text);
-	if ( pText == NULL) return;
+	appendText(tstring(text));
+}
 
-	HWND hEdit = GetDlgItem(this->_hSelf, ID_DUMP);
+void CmdDlg::appendText(const tstring &text)
+{
+	tstring buf(text);
+	prettify(buf);
+	if (buf.empty()) {
+		return;
+	}
+
+	HWND hEdit = GetDlgItem(_hSelf, ID_DUMP);
 	int ndx = GetWindowTextLength(hEdit);
-	#ifdef WIN32
-      SendMessage (hEdit, EM_SETSEL, (WPARAM)ndx, (LPARAM)ndx);
-   #else
-      SendMessage (hEdit, EM_SETSEL, 0, MAKELONG (ndx, ndx));
-   #endif
-      SendMessage (hEdit, EM_REPLACESEL, 0, (LPARAM) ((LPSTR) pText));
-	  free(pText);
+	SendMessage (hEdit, EM_SETSEL, (WPARAM)ndx, (LPARAM)ndx);
+	SendMessage (hEdit, EM_REPLACESEL, 0, (LPARAM)buf.c_str());
 }
 
 void CmdDlg::show(HWND parent, int dialogID)
