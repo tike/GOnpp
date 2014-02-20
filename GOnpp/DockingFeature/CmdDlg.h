@@ -58,7 +58,7 @@ public :
 
 protected :
 	virtual BOOL CALLBACK run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam);
-	void prettify(tstring text);
+	void prettify(tstring &text);
 	void reshape(int width);
 	unsigned int _maxLine;
 private :

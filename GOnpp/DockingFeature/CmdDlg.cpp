@@ -79,7 +79,7 @@ void CmdDlg::reshape(int width)
 	::MoveWindow(_hSelf, rc.top, rc.left, width, rc.bottom - rc.top, TRUE);
 }
 
-void CmdDlg::prettify(tstring text)
+void CmdDlg::prettify(tstring &text)
 {
 	try {
 		const tstring search(_T("\n")), replace(_T("\r\n"));
@@ -90,6 +90,7 @@ void CmdDlg::prettify(tstring text)
 			text.replace(pos, search.length(), replace);
 			pos += replace.length();
 		}
+		text += replace;
 	} catch (...) {
 		text.clear();
 	}
