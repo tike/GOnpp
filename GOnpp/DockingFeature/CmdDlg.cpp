@@ -95,11 +95,6 @@ void CmdDlg::prettify(tstring text)
 	}
 }
 
-void CmdDlg::setText(LPTSTR text)
-{
-	setText(tstring(text));
-}
-
 void CmdDlg::setText(const tstring &text)
 {
 	tstring buf(text);
@@ -109,11 +104,6 @@ void CmdDlg::setText(const tstring &text)
 	}
 
 	::SetDlgItemText(this->_hSelf, ID_DUMP, buf.c_str());
-}
-
-void CmdDlg::appendText(LPTSTR text)
-{
-	appendText(tstring(text));
 }
 
 void CmdDlg::appendText(const tstring &text)

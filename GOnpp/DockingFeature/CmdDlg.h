@@ -52,9 +52,7 @@ public :
 	};
 
 	void setText(const tstring &text);
-	void setText(LPTSTR text);
 	void appendText(const tstring &text);
-	void appendText(LPTSTR text);
 
 	void show(HWND parent, int dialogID);
 
