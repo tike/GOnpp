@@ -252,7 +252,7 @@ bool setCommand(size_t index, TCHAR *cmdName, PFUNCPLUGINCMD pFunc, ShortcutKey 
 // To keep the goCmd class clean of notepad++ specific commands, 
 // notepad++ specific preparations (saving open files, etc) are done here
 // 
-DWORD run_go_tool(goCommand *goCmd){
+DWORD run_go_tool(goCommand &goCmd){
 	if ( !GO_CMD_FOUND || !current_file_is_go_file(nppData)){
 		return FALSE;
 	}
@@ -263,24 +263,24 @@ DWORD run_go_tool(goCommand *goCmd){
 
 	 CmdDlgShow();
 
-	if ( ! goCmd->InitialiseCmd(GO_CMD, full_current_file)){
+	if ( ! goCmd.InitialiseCmd(GO_CMD, full_current_file)){
 		::MessageBox(nppData._nppHandle, TEXT("failed to create commandline"), TEXT("E R R O R"), MB_OK);
 		return FALSE;
 	}
-	_cmdDlg.setText(goCmd->GetCommand());
-	goCmd->RunCmd();
-	if(goCmd->HasStdOut()){
-		LPTSTR stdOut = goCmd->GetstdOut();
+	_cmdDlg.setText(goCmd.GetCommand());
+	goCmd.RunCmd();
+	if(goCmd.HasStdOut()){
+		LPTSTR stdOut = goCmd.GetstdOut();
 		_cmdDlg.appendText(stdOut);
 		free(stdOut);
 	}
 
-	if(goCmd->HasStdErr()){
-		LPTSTR stdErr = goCmd->GetstdErr();
+	if(goCmd.HasStdErr()){
+		LPTSTR stdErr = goCmd.GetstdErr();
 		_cmdDlg.appendText(stdErr);
 		free(stdErr);
 	}
-	if (! goCmd->HasStdErr() && ! goCmd->HasStdOut()){
+	if (! goCmd.HasStdErr() && ! goCmd.HasStdOut()){
 		_cmdDlg.display(false);
 	} 
 	::SendMessage(nppData._nppHandle, NPPM_SWITCHTOFILE, 0, (LPARAM) full_current_file);
@@ -291,50 +291,42 @@ DWORD run_go_tool(goCommand *goCmd){
 
 void go_fmt(void)
 {	
-	goCommand* goCmd = new goCommand(_T("fmt"), NULL);
+	goCommand goCmd(_T("fmt"), NULL);
 
 	if ( ! run_go_tool(goCmd)) return;
 
-	if( ! goCmd->exitStatus){
+	if( ! goCmd.exitStatus){
 		if (reload_all_files(nppData))	_cmdDlg.display(false);
 	}
-	delete(goCmd);
 }
 
 
 void go_test(void)
 {
-	goCommand* goCmd = new goCommand(_T("test"), NULL);
-	
+	goCommand goCmd(_T("test"), NULL);
 	if ( ! run_go_tool(goCmd)) return;
-
-	delete(goCmd);
 }
 
 
 
 void go_install(void)
 {	
-	goCommand* goCmd = new goCommand(_T("install"), NULL);
+	goCommand goCmd(_T("install"), NULL);
 
 	if ( ! run_go_tool(goCmd)) return;
 
-	if (! goCmd->exitStatus){
-		LPTSTR cmd = goCmd->GetCommand();
+	if (! goCmd.exitStatus){
+		LPTSTR cmd = goCmd.GetCommand();
 		//::MessageBox(nppData._nppHandle, cmd, _T("Build successfull"), MB_OK);
 		free(cmd);
 	}
-	delete(goCmd);
 }
 
 
 void go_run(void)
 {	
-	goCommand* goCmd = new goRUN();
-
+	goRUN goCmd;
 	if ( ! run_go_tool(goCmd)) return;
-
-	delete(goCmd);
 }
 
 
