@@ -101,6 +101,9 @@
     <ClInclude Include="NppWrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="tstring.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DockingFeature\goLine.rc">
