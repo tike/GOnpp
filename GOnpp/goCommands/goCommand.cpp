@@ -22,12 +22,12 @@
 #undef min
 #endif
 
-goCommand::goCommand(LPCTSTR cmd, LPCTSTR flags)
+goCommand::goCommand(tstring& cmd, tstring& flags)
 {
-	this->cmd = cmd;
-	this->flags = flags;
+	this->cmd = cmd.substr(0, cmd.size());
+	this->flags = cmd.substr(0, flags.size());
 
-	this->currentDir = NULL;
+/*	this->currentDir = NULL;
 	this->currentFile = NULL;
 
 	this->goPath = NULL;
@@ -36,12 +36,13 @@ goCommand::goCommand(LPCTSTR cmd, LPCTSTR flags)
 	this->commandLine = NULL;
 	this->stdOut = NULL;
 	this->stdErr = NULL;
+*/
 }
 
 
 goCommand::~goCommand(void)
 {
-	if ( currentDir != NULL) free(currentDir);
+/*	if ( currentDir != NULL) free(currentDir);
 	if ( currentFile != NULL) free(currentFile);
 
 	if ( goPath != NULL) free(goPath);
@@ -50,6 +51,7 @@ goCommand::~goCommand(void)
 	if ( commandLine != NULL) free(commandLine);
 	if ( stdOut != NULL) free(stdOut);
 	if ( stdErr != NULL) free(stdErr);
+*/
 }
 
 BOOL goCommand::preRunCmd(void)
@@ -59,17 +61,17 @@ BOOL goCommand::preRunCmd(void)
 		return FALSE;
 	}
 
-	DWORD length = GetEnvironmentVariable(_TEXT("GOPATH"), raw_gopath, MAX_ENVIRON);
+	DWORD length = GetEnvironmentVariable(_T("GOPATH"), raw_gopath, MAX_ENVIRON);
 	if (length != 0){
 		free(raw_gopath);
 		return TRUE;
 	}
 
 	free(raw_gopath);
-	return ::SetEnvironmentVariable(_T("GOPATH"), this->goPath);
+	return ::SetEnvironmentVariable(_T("GOPATH"), this->goPath.c_str());
 }
 
-BOOL goCommand::InitialiseCmd(LPCTSTR go_cmd, LPTSTR current_file)
+BOOL goCommand::InitialiseCmd(tstring& go_cmd, tstring& current_file)
 {
 	if ( ! this->initializeFileVals(current_file)) return FALSE;
 	if ( ! this->buildCommandLine(go_cmd)) return FALSE;
@@ -80,131 +82,90 @@ BOOL goCommand::InitialiseCmd(LPCTSTR go_cmd, LPTSTR current_file)
 DWORD goCommand::RunCmd(void){
 	if ( ! this->preRunCmd()) return FALSE;
 
-	CommandExec *exec = new CommandExec(this->commandLine, this->currentDir);
-	if ( ! exec->Start()) return 200;
-	if ( ! exec->Wait()) return 201;
-	if ( ! exec->ReadOutput()) return 203;
+	CommandExec exec = CommandExec(this->commandLine.c_str(), this->currentDir.c_str());
+	if ( ! exec.Start()) return 200;
+	if ( ! exec.Wait()) return 201;
+	if ( ! exec.ReadOutput()) return 203;
 
-	this->exitStatus = exec->ExitStatus();
-	this->stdOut = exec->GetStdOut();
-	this->stdErr = exec->GetStdErr();
+	this->exitStatus = exec.ExitStatus();
+	this->stdOut = exec.GetStdOut();
+	this->stdErr = exec.GetStdErr();
 
-	delete(exec);
+	//delete(exec);
 	return this->exitStatus;
 }
 
-LPTSTR goCommand::GetCommand(void)
+tstring goCommand::GetCommand(void)
 {
-	if (this->commandLine == NULL) return NULL;
-
-	LPTSTR cl = (LPTSTR) _tcsdup(this->commandLine);
-	return cl;
+	return this->commandLine.substr(0, this->commandLine.size());
 }
 
 BOOL goCommand::HasStdOut(void)
 {
-	if (_tcslen(this->stdOut) > 0) {
-		return TRUE;
-	}
-	return FALSE;
+	if (this->stdOut.size() == 0) return FALSE;
+	return TRUE;
 }
 
-LPTSTR goCommand::GetstdOut(void)
+tstring goCommand::GetstdOut(void)
 {
-	if (this->stdOut == NULL) return NULL;
-
-	LPTSTR cl = (LPTSTR) _tcsdup(this->stdOut);
-	return cl;
+	return this->stdOut.substr(0, this->stdOut.size());
 }
 
 BOOL goCommand::HasStdErr(void)
 {
-	if (_tcslen(this->stdErr) > 0) {
-		return TRUE;
-	}
-	return FALSE;
-}
-
-LPTSTR goCommand::GetstdErr(void)
-{
-	if (this->stdErr == NULL) return NULL;
-
-	LPTSTR cl = (LPTSTR) _tcsdup(this->stdErr);
-	return cl;
-}
-
-BOOL goCommand::initializeFileVals(LPTSTR current_file)
-{
-	this->currentFile = (LPTSTR) calloc(MAX_PATH, sizeof(TCHAR));
-	if (this->currentFile == NULL) return FALSE;
-	_tcsncpy(this->currentFile, current_file, std::min<size_t>(MAX_PATH, _tcslen(current_file)));
-
-	this->currentDir = (LPTSTR) _tcsdup(this->currentFile);
-	if (this->currentDir == NULL) return FALSE;
-	if ( ! PathRemoveFileSpec(this->currentDir)) return FALSE;
-
+	if (this->stdErr.size() == 0) return FALSE;
 	return TRUE;
 }
 
-// path operations
-BOOL goCommand::initializeGoVals(void){
-	LPCTSTR pathSep = TEXT("\\");
-	LPTSTR dir = NULL;
-	LPTSTR start_address = NULL;
-	LPTSTR pkg = NULL;
-
-	dir = (LPTSTR) _tcsdup(this->currentDir);
-	if (dir == NULL) return FALSE;
-	start_address = dir;
-
-	this->goPath = (LPTSTR) calloc(MAX_PATH, sizeof(TCHAR));
-	if (this->goPath == NULL) {
-		free(start_address);
-		return FALSE;
-	}
-
-	this->goPkg = (LPTSTR) calloc(MAX_PATH, sizeof(TCHAR));
-	if (this->goPkg == NULL){
-		free(start_address);
-		return FALSE;
-	}
-	
-	dir = _tcstok(dir, pathSep);
-	_tcsncpy(this->goPath, dir, _tcslen(dir)+1);
-	while(dir != NULL){
-		pkg = dir + _tcslen(dir) + 1;
-		if (_tcscmp(dir, TEXT("src")) == 0){
-			_tcsncpy(this->goPkg, pkg, _tcslen(pkg)+1);
-			free(start_address);
-			return TRUE;
-		}
-		PathAppend(this->goPath, dir);
-		dir = _tcstok(NULL, pathSep);
-	}
-	free(start_address);
-	return FALSE;
+tstring goCommand::GetstdErr(void)
+{
+	return this->stdErr.substr(0, this->stdErr.size());	
 }
 
-BOOL goCommand::buildCommandLine(LPCTSTR go_cmd){
+BOOL goCommand::initializeFileVals(tstring& current_file)
+{
+	this->currentFile = current_file.substr(0, current_file.size());
+	this->currentDir = current_file.substr(0, current_file.size());
+	
+	size_t last_dir = this->currentDir.rfind(TS_PATH_SEP, std::string::npos);
+	if (last_dir != std::string::npos){
+		this->currentDir.resize(last_dir);
+	}
+	return TRUE;
+}
+
+// initialize goPkg,  goPath to appropriate values
+BOOL goCommand::initializeGoVals(void){
+	size_t src_pos = this->currentDir.find(tstring(_T("src")), 0);
+	if (src_pos == std::string::npos){
+		// handle error
+		return FALSE;
+	}
+
+	this->goPath = this->currentDir.substr(0, src_pos - 1);
+	this->goPkg = this->currentDir.substr(src_pos + 4, std::string::npos);
+	return TRUE;
+}
+
+BOOL goCommand::buildCommandLine(tstring& go_cmd){
 	if( ! this->initializeGoVals()) return FALSE;
 
 	return this->combineCommandLine(go_cmd, this->goPkg);
 }
 
-BOOL goCommand::combineCommandLine(LPCTSTR go_cmd, LPTSTR pkg)
+BOOL goCommand::combineCommandLine(tstring& go_cmd, tstring& pkg)
 {
-	PathQuoteSpaces(pkg);
+	this->commandLine = tstring(go_cmd);
+	this->commandLine.append(_T(" "));
 
-	size_t size = _tcslen(go_cmd) + _tcslen(this->cmd) +_tcslen(pkg) + 2;
-	LPTSTR args = (LPTSTR) calloc(size + 1, sizeof(TCHAR));
-	if (args == NULL) return FALSE;
+	if ( this->flags.size() > 0){
+		this->commandLine.append(go_cmd);
+		this->commandLine.append(_T(" "));
+	}
 
-	_tcsncat(args, go_cmd, std::min(_tcslen(go_cmd), size - _tcslen(args)));
-	_tcsncat(args, _T(" "), std::min(sizeof(args), size - _tcslen(args)));
-	_tcsncat(args, cmd, std::min( _tcslen(cmd), size -_tcslen(args)));
-	_tcsncat(args, _T(" "), std::min(sizeof(args), size - _tcslen(args)));
-	_tcsncat(args, pkg, std::min( _tcslen(pkg), size -_tcslen(args)));
-
-	this->commandLine = args;
+	this->commandLine.append(this->cmd);
+	this->commandLine.append(_T(" "));
+	
+	this->commandLine.append(pkg);
 	return TRUE;
 }

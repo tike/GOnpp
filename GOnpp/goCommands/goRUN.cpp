@@ -18,7 +18,7 @@
 
 
 goRUN::goRUN(void)
-	:goCommand(_T("run"), NULL)
+	:goCommand(tstring(_T("run")), tstring())
 {
 }
 
@@ -32,7 +32,7 @@ BOOL goRUN::preRunCmd(void)
 	return TRUE;
 }
 
-BOOL goRUN::buildCommandLine(LPCTSTR go_cmd)
+BOOL goRUN::buildCommandLine(tstring& go_cmd)
 {
 	return this->combineCommandLine(go_cmd, this->currentFile);
 }

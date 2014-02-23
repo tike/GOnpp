@@ -76,7 +76,7 @@ bool doCloseTag = false;
 #define MAX_ENVIRON  32767
 
 // $(GOROOT)\bin\go.exe
-LPTSTR GO_CMD = NULL;
+tstring GO_CMD;
 BOOL GO_CMD_FOUND = FALSE;
 
 // initialize the GO_CMD variable to hold the path for go.exe
@@ -84,45 +84,45 @@ BOOL initialize_go_cmd(){
 	// allocate string to hold value obtained from environment variable
 	LPTSTR raw_goroot = (LPTSTR) calloc(MAX_ENVIRON, sizeof(TCHAR));
 	if (raw_goroot == NULL){
-		::MessageBox(nppData._nppHandle, TEXT("Out of memory, fuck!"), TEXT("E R R O R"), MB_OK);
+		::MessageBox(nppData._nppHandle, _T("Out of memory, fuck!"), _T("E R R O R"), MB_OK);
 		return FALSE;
 	}
 
 	// allocate memory to hold string "xyz\bin\go.exe"
 	// will be freed in pluginCleanUp
-	GO_CMD = (LPTSTR) calloc(MAX_PATH, sizeof(TCHAR));
-	if (GO_CMD == NULL){
-		::MessageBox(nppData._nppHandle, TEXT("Out of memory, fuck!"), TEXT("E R R O R"), MB_OK);
+	LPTSTR GO_CMD_tmp = (LPTSTR) calloc(MAX_PATH, sizeof(TCHAR));
+	if (GO_CMD_tmp == NULL){
+		::MessageBox(nppData._nppHandle, _T("Out of memory, fuck!"), _T("E R R O R"), MB_OK);
 		free(raw_goroot);
 		return FALSE;
 	}
 
 	// if GOBIN is set set assume that go.exe is there
-	DWORD length = GetEnvironmentVariable(_TEXT("GOBIN"), raw_goroot, MAX_ENVIRON);
+	DWORD length = ::GetEnvironmentVariable(_T("GOBIN"), raw_goroot, MAX_ENVIRON);
 	if (length != 0){
-		if (PathCombine(GO_CMD, raw_goroot, TEXT("go.exe")) == NULL) return FALSE;
-		PathQuoteSpaces(GO_CMD);
-
+		if (::PathCombine(GO_CMD_tmp, raw_goroot, _T("go.exe")) == NULL) return FALSE;
+		::PathQuoteSpaces(GO_CMD_tmp);
+		GO_CMD = tstring(GO_CMD_tmp);
 		free(raw_goroot);
 		return TRUE;
 	}
 	
 	// if GOROOT is set assume that go.exe is there
-	length = GetEnvironmentVariable(_TEXT("GOROOT"), raw_goroot, MAX_ENVIRON);
+	length = ::GetEnvironmentVariable(_T("GOROOT"), raw_goroot, MAX_ENVIRON);
 	if (length != 0){
-		if (PathCombine(GO_CMD, raw_goroot, TEXT("bin\\go.exe")) == NULL) return FALSE;
-		PathQuoteSpaces(GO_CMD);
-
+		if (::PathCombine(GO_CMD_tmp, raw_goroot, _T("bin\\go.exe")) == NULL) return FALSE;
+		::PathQuoteSpaces(GO_CMD_tmp);
+		GO_CMD = tstring(GO_CMD_tmp);
 		free(raw_goroot);
 		return TRUE;
 	}
 
 	// if neither is set, pray that go.exe is somewhere on the path
 	if (GetLastError() == ERROR_ENVVAR_NOT_FOUND){
-		GO_CMD = _T("go.exe");
+		GO_CMD_tmp = _T("go.exe");
 		free(raw_goroot);
 
-		CommandExec c = CommandExec(GO_CMD, _T(""));
+		CommandExec c = CommandExec(GO_CMD_tmp, _T(""));
 		BOOL start = c.Start();
 		BOOL end = c.Wait();
 		DWORD status = c.ExitStatus();
@@ -131,11 +131,12 @@ BOOL initialize_go_cmd(){
 				NO_GO_EXE_ERROR), 
 				_T("go configuration error"), MB_OK | MB_ICONERROR);
 		}
+		GO_CMD = tstring(GO_CMD_tmp);
 		return TRUE;
 	}
 	
 	free(raw_goroot);
-	return TRUE;
+	return FALSE;
 }
 
 
@@ -158,7 +159,7 @@ void pluginCleanUp()
 	::WritePrivateProfileString(sectionName, keyName, doCloseTag?TEXT("1"):TEXT("0"), iniFilePath);
 	autocompletion.reset();
 	_cmdDlg.destroy();
-	free(GO_CMD);
+	//free(GO_CMD);
 }
 
 //
@@ -269,22 +270,22 @@ DWORD run_go_tool(goCommand &goCmd){
 
 	 CmdDlgShow();
 
-	if ( ! goCmd.InitialiseCmd(GO_CMD, (LPTSTR) full_current_file.c_str())){
+	if ( ! goCmd.InitialiseCmd(GO_CMD, full_current_file)){
 		::MessageBox(nppData._nppHandle, TEXT("failed to create commandline"), TEXT("E R R O R"), MB_OK);
 		return FALSE;
 	}
 	_cmdDlg.setText(goCmd.GetCommand());
 	goCmd.RunCmd();
 	if(goCmd.HasStdOut()){
-		LPTSTR stdOut = goCmd.GetstdOut();
+		tstring stdOut = goCmd.GetstdOut();
 		_cmdDlg.appendText(stdOut);
-		free(stdOut);
+		//free(stdOut);
 	}
 
 	if(goCmd.HasStdErr()){
-		LPTSTR stdErr = goCmd.GetstdErr();
+		tstring stdErr = goCmd.GetstdErr();
 		_cmdDlg.appendText(stdErr);
-		free(stdErr);
+		// free(stdErr);
 	}
 	if (! goCmd.HasStdErr() && ! goCmd.HasStdOut()){
 		_cmdDlg.display(false);
@@ -297,7 +298,8 @@ DWORD run_go_tool(goCommand &goCmd){
 
 void go_fmt(void)
 {	
-	goCommand goCmd(_T("fmt"), NULL);
+	tstring cmd = tstring(_T("fmt"));
+	goCommand goCmd(cmd, tstring());
 
 	if ( ! run_go_tool(goCmd)) return;
 
@@ -310,7 +312,8 @@ void go_fmt(void)
 
 void go_test(void)
 {
-	goCommand goCmd(_T("test"), NULL);
+	tstring cmd = tstring(_T("test"));
+	goCommand goCmd(cmd, tstring());
 	if ( ! run_go_tool(goCmd)) return;
 }
 
@@ -318,15 +321,16 @@ void go_test(void)
 
 void go_install(void)
 {	
-	goCommand goCmd(_T("install"), NULL);
+	tstring cmd = tstring(_T("install"));
+	goCommand goCmd(cmd, tstring());
 
 	if ( ! run_go_tool(goCmd)) return;
 
-	if (! goCmd.exitStatus){
-		LPTSTR cmd = goCmd.GetCommand();
-		//::MessageBox(nppData._nppHandle, cmd, _T("Build successfull"), MB_OK);
-		free(cmd);
+	/* if (! goCmd.exitStatus){
+		tstring cmd = goCmd.GetCommand();
+		::MessageBox(nppData._nppHandle, cmd, _T("Build successfull"), MB_OK);
 	}
+	*/
 }
 
 

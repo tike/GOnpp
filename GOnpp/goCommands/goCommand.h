@@ -20,50 +20,51 @@
 #include <windows.h>
 #include "PluginInterface.h"
 #include "CommandExec.h"
+#include "tstring.h"
 
 #define MAX_ENVIRON  32767
 
 class goCommand
 {
 public:
-	goCommand(LPCTSTR cmd, LPCTSTR flags);
+	goCommand(tstring& cmd, tstring& flags);
 	~goCommand(void);
 
-	BOOL InitialiseCmd(LPCTSTR go_cmd, LPTSTR current_file);
+	BOOL InitialiseCmd(tstring& go_cmd, tstring& current_file);
 	DWORD RunCmd(void);
-	LPTSTR GetCommand(void);
+	tstring GetCommand(void);
 
 	DWORD exitStatus;
 
 	BOOL HasStdOut(void);
-	LPTSTR GetstdOut(void);
+	tstring GetstdOut(void);
 
 	BOOL HasStdErr(void);
-	LPTSTR GetstdErr(void);
+	tstring GetstdErr(void);
 
 protected:
 	// configuration Variables
-	LPCTSTR cmd;
-	LPCTSTR flags;
+	tstring cmd;
+	tstring flags;
 
 	// pkg related runvars
-	LPTSTR currentFile;
-	LPTSTR currentDir;
-	LPTSTR goPath;
-	LPTSTR goPkg;
+	tstring currentFile;
+	tstring currentDir;
+	tstring goPath;
+	tstring goPkg;
 
 	// execution related
-	LPTSTR commandLine;
-	LPTSTR stdOut;
-	LPTSTR stdErr;
+	tstring commandLine;
+	tstring stdOut;
+	tstring stdErr;
 
 
 	// path operations
 	BOOL initializeGoVals(void);
-	BOOL initializeFileVals(LPTSTR current_file);
+	BOOL initializeFileVals(tstring& current_file);
 
-	virtual BOOL buildCommandLine(LPCTSTR go_cmd);
-	BOOL combineCommandLine(LPCTSTR go_cmd, LPTSTR pkg);
+	virtual BOOL buildCommandLine(tstring& go_cmd);
+	BOOL combineCommandLine(tstring& go_cmd, tstring& pkg);
 
 	virtual BOOL preRunCmd(void);
 };
