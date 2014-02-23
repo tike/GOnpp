@@ -82,7 +82,7 @@ BOOL goCommand::InitialiseCmd(tstring& go_cmd, tstring& current_file)
 DWORD goCommand::RunCmd(void){
 	if ( ! this->preRunCmd()) return FALSE;
 
-	CommandExec exec = CommandExec(this->commandLine.c_str(), this->currentDir.c_str());
+	CommandExec exec = CommandExec(this->commandLine, this->currentDir);
 	if ( ! exec.Start()) return 200;
 	if ( ! exec.Wait()) return 201;
 	if ( ! exec.ReadOutput()) return 203;

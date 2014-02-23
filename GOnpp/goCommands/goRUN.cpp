@@ -34,5 +34,11 @@ BOOL goRUN::preRunCmd(void)
 
 BOOL goRUN::buildCommandLine(tstring& go_cmd)
 {
+	if (this->currentFile.find(_T(" "), 0) != std::string::npos){
+		tstring quoted = tstring(_T("\""));
+		quoted.append(this->currentFile);
+		quoted.append(_T("\""));
+		this->currentFile = quoted;
+	}
 	return this->combineCommandLine(go_cmd, this->currentFile);
 }

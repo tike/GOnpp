@@ -21,10 +21,10 @@
 #undef min
 #endif
 
-CommandExec::CommandExec(LPCTSTR cmd, LPCTSTR dir)
+CommandExec::CommandExec(tstring& cmd, tstring& dir)
 {
-	this->cmd = _tcsdup(cmd);
-	this->dir = _tcsdup(dir);
+	this->cmd = tstring(cmd);
+	this->dir = tstring(dir);
 
 	memset(&this->sa, 0, sizeof(SECURITY_ATTRIBUTES));
 	this->sa.nLength = sizeof(SECURITY_ATTRIBUTES); 
@@ -40,13 +40,13 @@ CommandExec::CommandExec(LPCTSTR cmd, LPCTSTR dir)
 
 	this->exitStatus = 0;
 
-	this->stdOut = NULL;
+	this->stdOut = tstring();
 	this->stdOutRd = NULL;
 	this->stdOutWr = NULL;
 	this->StdOutRead = FALSE;
 	this->StdOutClosed = FALSE;
 
-	this->stdErr = NULL;
+	this->stdErr = tstring();
 	this->stdErrRd = NULL;
 	this->stdErrWr = NULL;
 	this->StdErrRead = FALSE;
@@ -56,13 +56,13 @@ CommandExec::CommandExec(LPCTSTR cmd, LPCTSTR dir)
 
 CommandExec::~CommandExec(void)
 {
-	free(this->cmd);
-	free(this->dir);
+	//free(this->cmd);
+	//free(this->dir);
 
-	if(this->stdOut != NULL) free(this->stdOut);
+	//if(this->stdOut != NULL) free(this->stdOut);
 	if( ! this->StdOutClosed) CloseHandle(this->stdOutRd);
 
-	if(this->stdErr != NULL) free(this->stdErr);
+	//if(this->stdErr != NULL) free(this->stdErr);
 	if( ! this->StdErrClosed) CloseHandle(this->stdErrRd);
 }
 
@@ -86,13 +86,13 @@ BOOL CommandExec::Start(void)
 
 	BOOL processStarted = ::CreateProcess(
 				NULL,		// lpApplicationName
-				this->cmd,	// lpCommandLine
+			(TCHAR*)this->cmd.c_str(),	// lpCommandLine
 				NULL,		// Process Attributes
 				NULL,		// lpThreadAttributes
 				TRUE,		// inheritHandles
 				0,			// CreationFlags
 				NULL,		// lpEnvironment
-				this->dir,	// lpCurrentDirectory
+				this->dir.c_str(),	// lpCurrentDirectory
 				&this->si,	// StartupInfo
 				&this->pi	// ProcessInfo
 		);
@@ -105,7 +105,7 @@ BOOL CommandExec::Start(void)
 // reads from the given handle until EOF
 // returns a string containing all output
 // remember to FREE THE RESULTING STRING when you're done with it!
-BOOL CommandExec::readOutput(HANDLE handle, LPTSTR* output){
+BOOL CommandExec::readOutput(HANDLE handle, tstring& output){
 	DWORD outputLen = BUFSIZE * 10;
 	BOOL bSuccess = FALSE;
 	DWORD Read = 0;
@@ -114,11 +114,12 @@ BOOL CommandExec::readOutput(HANDLE handle, LPTSTR* output){
 	TCHAR TBuf[BUFSIZE+1];
 	TBuf[BUFSIZE] = NULL;
 
-	*output = (LPTSTR) calloc(outputLen+1, sizeof(TCHAR));
-	if (*output == NULL) return FALSE;
-
 	for (;;) {
 		bSuccess = ReadFile(handle, chBuf, BUFSIZE, &Read, NULL);
+		
+		//upon reaching EOF, we will break out of the loop here,
+		//during the next iteration (after the last read has been 
+		//properly processed...
 		if( ! bSuccess || Read == 0 ) break;
 
 		#ifdef UNICODE
@@ -142,20 +143,13 @@ BOOL CommandExec::readOutput(HANDLE handle, LPTSTR* output){
 				}
 				break;
 			}*/
+			// zero terminate the string 
 			TBuf[converted] = NULL;
 		#else
 			TBuff = chBuff;
 		#endif
 
-		if( _tcslen(*output) > outputLen - BUFSIZE){
-			outputLen += BUFSIZE * 10;
-			*output = (LPTSTR) realloc(*output, outputLen * sizeof(TCHAR));
-			if (*output == NULL){
-				return FALSE;
-			}
-		}
-		
-		_tcsncat(*output, TBuf, std::min<DWORD>(BUFSIZE, outputLen - _tcslen(*output))); 
+		output.append(TBuf); 
 	}
 	return TRUE;
 }
@@ -178,13 +172,13 @@ DWORD CommandExec::ExitStatus(void)
 
 BOOL CommandExec::ReadOutput(void)
 {
-	if ( ! this->readOutput(this->stdOutRd, &this->stdOut)){
+	if ( ! this->readOutput(this->stdOutRd, this->stdOut)){
 		return FALSE;
 	}
 	this->StdOutRead = TRUE;
 	if (CloseHandle(this->stdOutRd)) this->StdOutClosed = TRUE;
 
-	if ( ! this->readOutput(this->stdErrRd, &this->stdErr)){
+	if ( ! this->readOutput(this->stdErrRd, this->stdErr)){
 		return FALSE;
 	}
 	this->StdErrRead = TRUE;
@@ -193,24 +187,19 @@ BOOL CommandExec::ReadOutput(void)
 	return TRUE;
 }
 
-LPTSTR CommandExec::GetStdOut(void){
-	return _tcsdup(this->stdOut);
+tstring CommandExec::GetStdOut(void){
+	return tstring(this->stdOut);
 }
 
-LPTSTR CommandExec::GetStdErr(void){
-	return _tcsdup(this->stdErr);
+tstring CommandExec::GetStdErr(void){
+	return tstring(this->stdErr);
 }
 
 
-LPTSTR CommandExec::GetCombined()
+tstring CommandExec::GetCombined(void)
 {
-	size_t length = _tcslen(this->stdOut) + _tcslen(this->stdErr);
-	LPTSTR out = (LPTSTR) calloc(length + 1, sizeof(TCHAR));
-	if (*out == NULL) return NULL;
-	
-	_tcsncat(out, stdOut, std::min(_tcslen(stdOut), length - _tcslen(out)));
-	_tcsncat(out, stdErr, std::min(_tcslen(stdErr), length - _tcslen(out)));
-
+	tstring out = tstring(this->stdOut);
+	out.append(this->stdErr);
 	return out;
 }
 

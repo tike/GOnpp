@@ -117,25 +117,25 @@ BOOL initialize_go_cmd(){
 		return TRUE;
 	}
 
+	free(raw_goroot);
 	// if neither is set, pray that go.exe is somewhere on the path
 	if (GetLastError() == ERROR_ENVVAR_NOT_FOUND){
-		GO_CMD_tmp = _T("go.exe");
-		free(raw_goroot);
+		GO_CMD = tstring(_T("go.exe"));
+		
 
-		CommandExec c = CommandExec(GO_CMD_tmp, _T(""));
+		CommandExec c = CommandExec(GO_CMD, tstring());
 		BOOL start = c.Start();
 		BOOL end = c.Wait();
 		DWORD status = c.ExitStatus();
 		if ( ! start && ! end && status ){
 			::MessageBox(nppData._nppHandle,
-				NO_GO_EXE_ERROR), 
+				NO_GO_EXE_ERROR, 
 				_T("go configuration error"), MB_OK | MB_ICONERROR);
 		}
 		GO_CMD = tstring(GO_CMD_tmp);
 		return TRUE;
 	}
-	
-	free(raw_goroot);
+
 	return FALSE;
 }
 
@@ -271,6 +271,7 @@ DWORD run_go_tool(goCommand &goCmd){
 	 CmdDlgShow();
 
 	if ( ! goCmd.InitialiseCmd(GO_CMD, full_current_file)){
+		_cmdDlg.setText(goCmd.GetCommand());
 		::MessageBox(nppData._nppHandle, TEXT("failed to create commandline"), TEXT("E R R O R"), MB_OK);
 		return FALSE;
 	}

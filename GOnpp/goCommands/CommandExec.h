@@ -18,12 +18,13 @@
 
 #include <tchar.h>
 #include <windows.h>
+#include "tstring.h"
 
 
 class CommandExec
 {
 public:
-	CommandExec(LPCTSTR cmd, LPCTSTR dir);
+	CommandExec(tstring& cmd, tstring& dir);
 	~CommandExec(void);
 
 	BOOL Start(void);
@@ -32,15 +33,15 @@ public:
 	DWORD ExitStatus(void);
 
 	BOOL ReadOutput(void);
-	LPTSTR GetStdOut(void);
-	LPTSTR GetStdErr(void);
-	LPTSTR GetCombined(void);
+	tstring GetStdOut(void);
+	tstring GetStdErr(void);
+	tstring GetCombined(void);
 
 protected:
 	BOOL setupPipe(PHANDLE read, PHANDLE write);
-	BOOL readOutput(HANDLE handle, LPTSTR* output);
-	LPTSTR cmd;
-	LPTSTR dir;
+	BOOL readOutput(HANDLE handle, tstring& output);
+	tstring cmd;
+	tstring dir;
 
 	SECURITY_ATTRIBUTES sa;
 	STARTUPINFO si;
@@ -48,7 +49,7 @@ protected:
 
 	DWORD exitStatus;
 
-	LPTSTR stdOut;
+	tstring stdOut;
 	HANDLE stdOutRd;
 	HANDLE stdOutWr;
 	BOOL StdOutRead;
@@ -56,7 +57,7 @@ protected:
 
 	HANDLE stdErrRd;
 	HANDLE stdErrWr;
-	LPTSTR stdErr;
+	tstring stdErr;
 	BOOL StdErrRead;
 	BOOL StdErrClosed;
 };

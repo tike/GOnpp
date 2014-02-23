@@ -116,9 +116,9 @@ void CmdDlg::appendText(const tstring &text)
 	}
 
 	HWND hEdit = GetDlgItem(_hSelf, ID_DUMP);
-	int ndx = GetWindowTextLength(hEdit);
-	SendMessage (hEdit, EM_SETSEL, (WPARAM)ndx, (LPARAM)ndx);
-	SendMessage (hEdit, EM_REPLACESEL, 0, (LPARAM)buf.c_str());
+	int ndx = ::GetWindowTextLength(hEdit);
+	::SendMessage (hEdit, EM_SETSEL, (WPARAM)ndx, (LPARAM)ndx);
+	::SendMessage (hEdit, EM_REPLACESEL, 0, (LPARAM)buf.c_str());
 }
 
 void CmdDlg::show(HWND parent, int dialogID)
