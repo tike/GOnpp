@@ -258,17 +258,18 @@ bool setCommand(size_t index, TCHAR *cmdName, PFUNCPLUGINCMD pFunc, ShortcutKey 
 // notepad++ specific preparations (saving open files, etc) are done here
 // 
 DWORD run_go_tool(goCommand &goCmd){
-	if ( !GO_CMD_FOUND || !current_file_is_go_file(nppData)){
+	NppWrapper npp(nppData);
+	if ( !GO_CMD_FOUND || !npp.current_file_is_go_file()){
 		return FALSE;
 	}
-	
-	TCHAR full_current_file[MAX_PATH];
-	::SendMessage(nppData._nppHandle, NPPM_GETFULLCURRENTPATH, MAX_PATH, (LPARAM) full_current_file);
-	::SendMessage(nppData._nppHandle, NPPM_SAVEALLFILES, 0, 0);
+	npp.save_all_files();
+
+	tstring full_current_file;
+	npp.get_full_current_filename(full_current_file);
 
 	 CmdDlgShow();
 
-	if ( ! goCmd.InitialiseCmd(GO_CMD, full_current_file)){
+	if ( ! goCmd.InitialiseCmd(GO_CMD, (LPTSTR) full_current_file.c_str())){
 		::MessageBox(nppData._nppHandle, TEXT("failed to create commandline"), TEXT("E R R O R"), MB_OK);
 		return FALSE;
 	}
@@ -288,7 +289,7 @@ DWORD run_go_tool(goCommand &goCmd){
 	if (! goCmd.HasStdErr() && ! goCmd.HasStdOut()){
 		_cmdDlg.display(false);
 	} 
-	::SendMessage(nppData._nppHandle, NPPM_SWITCHTOFILE, 0, (LPARAM) full_current_file);
+	npp.switch_to_file(full_current_file);
 	
 	return TRUE;
 }
@@ -301,7 +302,8 @@ void go_fmt(void)
 	if ( ! run_go_tool(goCmd)) return;
 
 	if( ! goCmd.exitStatus){
-		if (reload_all_files(nppData))	_cmdDlg.display(false);
+		NppWrapper npp(nppData);
+		if (npp.reload_all_files())	_cmdDlg.display(false);
 	}
 }
 

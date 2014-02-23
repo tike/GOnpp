@@ -63,3 +63,20 @@ BOOL NppWrapper::reload_all_files(void){
 
 	return TRUE;
 }
+
+void NppWrapper::save_all_files(void){
+	::SendMessage(_npp._nppHandle, NPPM_SAVEALLFILES, 0, 0);
+}
+
+void NppWrapper::switch_to_file(tstring filename){
+	::SendMessage(_npp._nppHandle, NPPM_SWITCHTOFILE, 0, (LPARAM) filename.c_str());
+}
+
+void NppWrapper::get_full_current_filename(tstring& filename){
+	TCHAR full_current_file[MAX_PATH];
+	::SendMessage(_npp._nppHandle, NPPM_GETFULLCURRENTPATH, MAX_PATH, (LPARAM) full_current_file);
+	
+	filename.clear();
+	filename.insert(0, (TCHAR*) full_current_file);
+	return ;
+}
