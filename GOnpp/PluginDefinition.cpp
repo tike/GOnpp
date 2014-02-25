@@ -30,9 +30,9 @@
 #include "goCommands/goRUN.h"
 #include "AutoCompletion.h"
 
-const TCHAR sectionName[] = TEXT("Insert Extesion");
-const TCHAR keyName[] = TEXT("doCloseTag");
-const TCHAR configFileName[] = TEXT("GOnpp.ini");
+const TCHAR sectionName[] = _T("Insert Extesion");
+const TCHAR keyName[] = _T("doCloseTag");
+const TCHAR configFileName[] = _T("GOnpp.ini");
 
 CmdDlg _cmdDlg;
 std::auto_ptr<AutoCompletion> autocompletion;
@@ -68,15 +68,15 @@ bool initialize_go_cmd(){
 	// allocate string to hold value obtained from environment variable
 	LPTSTR raw_goroot = (LPTSTR) calloc(MAX_ENVIRON, sizeof(TCHAR));
 	if (raw_goroot == NULL){
-		::MessageBox(nppData._nppHandle, _T("Out of memory, fuck!"), _T("E R R O R"), MB_OK);
-		return false;
+		::MessageBox(nppData._nppHandle, OUT_OF_MEMORY, MSG_ERROR_HEAD, MB_OK | MB_ICONERROR);
+		return FALSE;
 	}
 
 	// allocate memory to hold string "xyz\bin\go.exe"
 	// will be freed in pluginCleanUp
 	LPTSTR GO_CMD_tmp = (LPTSTR) calloc(MAX_PATH, sizeof(TCHAR));
 	if (GO_CMD_tmp == NULL){
-		::MessageBox(nppData._nppHandle, _T("Out of memory, fuck!"), _T("E R R O R"), MB_OK);
+		::MessageBox(nppData._nppHandle, OUT_OF_MEMORY, MSG_ERROR_HEAD, MB_OK | MB_ICONERROR);
 		free(raw_goroot);
 		return false;
 	}
@@ -161,13 +161,13 @@ void commandMenuInit()
 	::SendMessage(nppData._nppHandle, NPPM_GETPLUGINSCONFIGDIR, MAX_PATH, (LPARAM)iniFilePath);
 
 	// if config path doesn't exist, we create it
-	if (PathFileExists(iniFilePath) == FALSE)
+	if (::PathFileExists(iniFilePath) == FALSE)
 	{
 		::CreateDirectory(iniFilePath, NULL);
 	}
 
 	// make your plugin config file full file path name
-	PathAppend(iniFilePath, configFileName);
+	::PathAppend(iniFilePath, configFileName);
 
 	// get the parameter value from plugin config
 	doCloseTag = (::GetPrivateProfileInt(sectionName, keyName, 0, iniFilePath) != 0);
@@ -177,7 +177,7 @@ void commandMenuInit()
 	fmtKey->_isCtrl = false;
 	fmtKey->_isShift = false;
 	fmtKey->_key = 0x46; //VK_F
-    setCommand(0, TEXT("go fmt"), go_fmt, fmtKey, false);
+    setCommand(0, _T("go fmt"), go_fmt, fmtKey, false);
 
 	ShortcutKey *testKey = new ShortcutKey;
 	testKey->_isAlt = true;
@@ -185,7 +185,7 @@ void commandMenuInit()
 	testKey->_isShift = false;
 	testKey->_key = 0x54; //VK_T
 
-    setCommand(1, TEXT("go test"), go_test, testKey, false);
+    setCommand(1, _T("go test"), go_test, testKey, false);
 
 	ShortcutKey *installKey = new ShortcutKey;
 	installKey->_isAlt = true;
@@ -193,7 +193,7 @@ void commandMenuInit()
 	installKey->_isShift = false;
 	installKey->_key = 0x49; //VK_I
 
-	setCommand(2, TEXT("go install"), go_install, installKey, false);
+	setCommand(2, _T("go install"), go_install, installKey, false);
 
 	ShortcutKey *runKey = new ShortcutKey;
 	runKey->_isAlt = true;
@@ -201,9 +201,9 @@ void commandMenuInit()
 	runKey->_isShift = false;
 	runKey->_key = 0x52; //VK_R
 
-	setCommand(3, TEXT("go run"), go_run, runKey, false);
+	setCommand(3, _T("go run"), go_run, runKey, false);
 
-	setCommand(DOCKABLE_DEMO_INDEX, TEXT("show output window"), CmdDlgShow, NULL, false);
+	setCommand(DOCKABLE_DEMO_INDEX, _T("show output window"), CmdDlgShow, NULL, false);
 }
 
 
@@ -257,7 +257,7 @@ DWORD run_go_tool(goCommand &goCmd){
 
 	if ( ! goCmd.InitialiseCmd(GO_CMD, full_current_file)){
 		_cmdDlg.setText(goCmd.GetCommand());
-		::MessageBox(nppData._nppHandle, TEXT("failed to create commandline"), TEXT("E R R O R"), MB_OK);
+		::MessageBox(nppData._nppHandle, CMD_CREATION_FAILED, MSG_ERROR_HEAD, MB_OK | MB_ICONERROR);
 		return FALSE;
 	}
 	_cmdDlg.setText(goCmd.GetCommand());
