@@ -2,6 +2,9 @@
 
 #include <vector>
 #include "PluginInterface.h"
+#include "PluginDefinition.h"
+
+#include "Shlwapi.h"
 
 using namespace std;
 
@@ -63,4 +66,25 @@ tstring NppWrapper::get_full_current_filename(){
 	TCHAR full_current_file[MAX_PATH];
 	::SendMessage(_npp._nppHandle, NPPM_GETFULLCURRENTPATH, MAX_PATH, (LPARAM) full_current_file);
 	return tstring(full_current_file);
+}
+
+
+BOOL NppWrapper::get_config_file_name(tstring& filepath){
+	TCHAR iniFilePath[MAX_PATH];
+	// get path of plugin configuration
+	::SendMessage(_npp._nppHandle, NPPM_GETPLUGINSCONFIGDIR, MAX_PATH, (LPARAM)iniFilePath);
+
+	// if config path doesn't exist, we create it
+	if (::PathFileExists(iniFilePath) == FALSE)
+	{
+		::CreateDirectory(iniFilePath, NULL);
+	}
+
+	// make your plugin config file full file path name
+	::PathAppend(iniFilePath, NPP_PLUGIN_NAME);
+	::PathAppend(iniFilePath, _T(".ini"));
+
+	filepath.clear();
+	filepath.append(iniFilePath, MAX_PATH);
+	return TRUE;
 }

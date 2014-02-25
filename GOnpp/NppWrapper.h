@@ -16,6 +16,9 @@ public:
 	void switch_to_file(tstring filename);
 	tstring get_full_current_filename();
 
+	// config file operations
+	BOOL get_config_file_name(tstring& filepath);
+
 private:
 	const NppData _npp;
 };

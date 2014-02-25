@@ -206,6 +206,7 @@
     <ClCompile Include="NppWrapper.cpp" />
     <ClCompile Include="PluginDefinition.cpp" />
     <ClCompile Include="DockingFeature\StaticDialog.cpp" />
+    <ClCompile Include="Settings.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AutoCompletion.h" />
@@ -221,6 +222,7 @@
     <ClInclude Include="PluginDefinition.h" />
     <ClInclude Include="PluginInterface.h" />
     <ClInclude Include="DockingFeature\resource.h" />
+    <ClInclude Include="Settings.h" />
     <ClInclude Include="tstring.h" />
     <ClInclude Include="Version.h" />
     <ClInclude Include="Scintilla.h" />
