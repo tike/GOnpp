@@ -142,13 +142,14 @@ bool goCommand::combineCommandLine(tstring& go_cmd, tstring& pkg)
 	this->commandLine.append(_T(" "));
 
 	if ( this->flags.size() > 0){
-		this->commandLine.append(go_cmd);
+		this->commandLine.append(this->flags);
 		this->commandLine.append(_T(" "));
 	}
-
 	this->commandLine.append(this->cmd);
 	this->commandLine.append(_T(" "));
 	
-	this->commandLine.append(pkg);
+	tstring save_pkg = tstring(pkg);
+	quote_if_spaces(save_pkg);
+	this->commandLine.append(save_pkg);
 	return TRUE;
 }

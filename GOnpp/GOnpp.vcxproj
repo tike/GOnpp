@@ -208,6 +208,7 @@
     <ClCompile Include="PluginDefinition.cpp" />
     <ClCompile Include="DockingFeature\StaticDialog.cpp" />
     <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="tstring.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AutoCompletion.h" />
