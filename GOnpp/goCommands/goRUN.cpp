@@ -27,9 +27,9 @@ goRUN::~goRUN(void)
 {
 }
 
-BOOL goRUN::preRunCmd(void)
+bool goRUN::preRunCmd(void)
 {
-	return TRUE;
+	return true;
 }
 
 BOOL goRUN::buildCommandLine(tstring& go_cmd)

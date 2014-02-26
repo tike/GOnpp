@@ -24,7 +24,7 @@ public:
 	goRUN(void);
 	~goRUN(void);
 
-	BOOL preRunCmd(void);
+	bool preRunCmd(void);
 	BOOL buildCommandLine(tstring& go_cmd);
 };
 

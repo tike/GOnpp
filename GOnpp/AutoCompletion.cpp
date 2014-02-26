@@ -8,6 +8,12 @@
 AutoCompletion::AutoCompletion(NppWrapper npp)
 	: _npp(npp)
 {
+	//TODO: find gocode in:
+	// a) path specified in .ini file
+	// b) PATH
+	// c) GOPATH
+	//then run `gocode -f=csv autocomplete BYTE_OFFSET < FILE_CONTENTS`
+	// or `gocode -f=csv --in=FILE_PATH BYTE_OFFSET`
 }
 
 

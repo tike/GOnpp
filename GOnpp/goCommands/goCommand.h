@@ -30,16 +30,16 @@ public:
 	goCommand(tstring& cmd, tstring& flags);
 	~goCommand(void);
 
-	BOOL InitialiseCmd(tstring& go_cmd, tstring& current_file);
+	bool InitialiseCmd(tstring& go_cmd, tstring& current_file);
 	DWORD RunCmd(void);
 	tstring GetCommand(void);
 
 	DWORD exitStatus;
 
-	BOOL HasStdOut(void);
+	bool HasStdOut();
 	tstring GetstdOut(void);
 
-	BOOL HasStdErr(void);
+	bool HasStdErr();
 	tstring GetstdErr(void);
 
 protected:
@@ -66,6 +66,6 @@ protected:
 	virtual BOOL buildCommandLine(tstring& go_cmd);
 	BOOL combineCommandLine(tstring& go_cmd, tstring& pkg);
 
-	virtual BOOL preRunCmd(void);
+	virtual bool preRunCmd(void);
 };
 

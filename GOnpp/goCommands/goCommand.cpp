@@ -14,6 +14,7 @@
 //along with this program; if not, write to the Free Software
 //Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+#include <vector>
 #include <algorithm>
 #include "goCommand.h"
 #include <shlwapi.h>
@@ -54,44 +55,50 @@ goCommand::~goCommand(void)
 */
 }
 
-BOOL goCommand::preRunCmd(void)
+bool goCommand::preRunCmd()
 {
-	LPTSTR raw_gopath = (LPTSTR) calloc(MAX_ENVIRON, sizeof(TCHAR));
-	if (raw_gopath == NULL){
-		return FALSE;
-	}
+	std::vector<TCHAR> raw_gopath(MAX_ENVIRON);
 
-	DWORD length = GetEnvironmentVariable(_T("GOPATH"), raw_gopath, MAX_ENVIRON);
-	if (length != 0){
-		free(raw_gopath);
-		return TRUE;
+	DWORD length = GetEnvironmentVariable(_T("GOPATH"), &raw_gopath[0], MAX_ENVIRON);
+	if (length != 0) {
+		return true;
 	}
-
-	free(raw_gopath);
-	return ::SetEnvironmentVariable(_T("GOPATH"), this->goPath.c_str());
+	
+	return ::SetEnvironmentVariable(_T("GOPATH"), this->goPath.c_str()) != FALSE;
 }
 
-BOOL goCommand::InitialiseCmd(tstring& go_cmd, tstring& current_file)
+bool goCommand::InitialiseCmd(tstring& go_cmd, tstring& current_file)
 {
-	if ( ! this->initializeFileVals(current_file)) return FALSE;
-	if ( ! this->buildCommandLine(go_cmd)) return FALSE;
+	if ( ! this->initializeFileVals(current_file)) {
+		return false;
+	}
+	if ( ! this->buildCommandLine(go_cmd)) {
+		return false;
+	}
 
-	return TRUE;
+	return true;
 }
 
 DWORD goCommand::RunCmd(void){
-	if ( ! this->preRunCmd()) return FALSE;
+	if ( ! this->preRunCmd()) {
+		return FALSE;
+	}
 
-	CommandExec exec = CommandExec(this->commandLine, this->currentDir);
-	if ( ! exec.Start()) return 200;
-	if ( ! exec.Wait()) return 201;
-	if ( ! exec.ReadOutput()) return 203;
+	CommandExec exec(this->commandLine, this->currentDir);
+	if ( ! exec.Start()) {
+		return 200;
+	}
+	if ( ! exec.Wait()) {
+		return 201;
+	}
+	if ( ! exec.ReadOutput()) {
+		return 203;
+	}
 
 	this->exitStatus = exec.ExitStatus();
 	this->stdOut = exec.GetStdOut();
 	this->stdErr = exec.GetStdErr();
 
-	//delete(exec);
 	return this->exitStatus;
 }
 
@@ -100,10 +107,9 @@ tstring goCommand::GetCommand(void)
 	return this->commandLine.substr(0, this->commandLine.size());
 }
 
-BOOL goCommand::HasStdOut(void)
+bool goCommand::HasStdOut()
 {
-	if (this->stdOut.size() == 0) return FALSE;
-	return TRUE;
+	return this->stdOut.size() != 0;
 }
 
 tstring goCommand::GetstdOut(void)
@@ -111,10 +117,9 @@ tstring goCommand::GetstdOut(void)
 	return this->stdOut.substr(0, this->stdOut.size());
 }
 
-BOOL goCommand::HasStdErr(void)
+bool goCommand::HasStdErr()
 {
-	if (this->stdErr.size() == 0) return FALSE;
-	return TRUE;
+	return this->stdErr.size() != 0;
 }
 
 tstring goCommand::GetstdErr(void)
