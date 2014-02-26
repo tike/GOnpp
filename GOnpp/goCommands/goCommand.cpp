@@ -48,9 +48,7 @@ bool goCommand::preRunCmd()
 
 bool goCommand::InitialiseCmd(tstring& go_cmd, tstring& current_file)
 {
-	if ( ! this->initializeFileVals(current_file)) {
-		return false;
-	}
+	this->initializeFileVals(current_file);
 	if ( ! this->buildCommandLine(go_cmd)) {
 		return false;
 	}
@@ -106,7 +104,7 @@ tstring goCommand::GetstdErr(void)
 	return this->stdErr.substr(0, this->stdErr.size());	
 }
 
-BOOL goCommand::initializeFileVals(tstring& current_file)
+void goCommand::initializeFileVals(tstring& current_file)
 {
 	this->currentFile = current_file.substr(0, current_file.size());
 	this->currentDir = current_file.substr(0, current_file.size());
@@ -115,29 +113,30 @@ BOOL goCommand::initializeFileVals(tstring& current_file)
 	if (last_dir != std::string::npos){
 		this->currentDir.resize(last_dir);
 	}
-	return TRUE;
 }
 
 // initialize goPkg,  goPath to appropriate values
-BOOL goCommand::initializeGoVals(void){
+bool goCommand::initializeGoVals() {
 	size_t src_pos = this->currentDir.find(tstring(_T("src")), 0);
 	if (src_pos == std::string::npos){
 		// handle error
-		return FALSE;
+		return false;
 	}
 
 	this->goPath = this->currentDir.substr(0, src_pos - 1);
 	this->goPkg = this->currentDir.substr(src_pos + 4, std::string::npos);
-	return TRUE;
+	return true;
 }
 
-BOOL goCommand::buildCommandLine(tstring& go_cmd){
-	if( ! this->initializeGoVals()) return FALSE;
+bool goCommand::buildCommandLine(tstring& go_cmd) {
+	if( ! this->initializeGoVals()) {
+		return false;
+	}
 
 	return this->combineCommandLine(go_cmd, this->goPkg);
 }
 
-BOOL goCommand::combineCommandLine(tstring& go_cmd, tstring& pkg)
+bool goCommand::combineCommandLine(tstring& go_cmd, tstring& pkg)
 {
 	this->commandLine = tstring(go_cmd);
 	this->commandLine.append(_T(" "));

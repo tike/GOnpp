@@ -32,7 +32,7 @@ bool goRUN::preRunCmd(void)
 	return true;
 }
 
-BOOL goRUN::buildCommandLine(tstring& go_cmd)
+bool goRUN::buildCommandLine(tstring& go_cmd)
 {
 	if (this->currentFile.find(_T(" "), 0) != std::string::npos){
 		tstring quoted = tstring(_T("\""));

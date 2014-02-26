@@ -60,11 +60,11 @@ protected:
 
 
 	// path operations
-	BOOL initializeGoVals(void);
-	BOOL initializeFileVals(tstring& current_file);
+	bool initializeGoVals();
+	void initializeFileVals(tstring& current_file);
 
-	virtual BOOL buildCommandLine(tstring& go_cmd);
-	BOOL combineCommandLine(tstring& go_cmd, tstring& pkg);
+	virtual bool buildCommandLine(tstring& go_cmd);
+	bool combineCommandLine(tstring& go_cmd, tstring& pkg);
 
 	virtual bool preRunCmd(void);
 };
