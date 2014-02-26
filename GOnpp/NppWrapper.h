@@ -14,7 +14,7 @@ public:
 	bool reload_all_files(void);
 	void save_all_files(void);
 	void switch_to_file(tstring filename);
-	void get_full_current_filename(tstring& filename);
+	tstring get_full_current_filename();
 
 private:
 	const NppData _npp;

@@ -59,11 +59,8 @@ void NppWrapper::switch_to_file(tstring filename){
 	::SendMessage(_npp._nppHandle, NPPM_SWITCHTOFILE, 0, (LPARAM) filename.c_str());
 }
 
-void NppWrapper::get_full_current_filename(tstring& filename){
+tstring NppWrapper::get_full_current_filename(){
 	TCHAR full_current_file[MAX_PATH];
 	::SendMessage(_npp._nppHandle, NPPM_GETFULLCURRENTPATH, MAX_PATH, (LPARAM) full_current_file);
-	
-	filename.clear();
-	filename.insert(0, (TCHAR*) full_current_file);
-	return ;
+	return tstring(full_current_file);
 }

@@ -265,10 +265,9 @@ DWORD run_go_tool(goCommand &goCmd){
 	}
 	npp.save_all_files();
 
-	tstring full_current_file;
-	npp.get_full_current_filename(full_current_file);
+	tstring &full_current_file = npp.get_full_current_filename();
 
-	 CmdDlgShow();
+	CmdDlgShow();
 
 	if ( ! goCmd.InitialiseCmd(GO_CMD, full_current_file)){
 		_cmdDlg.setText(goCmd.GetCommand());
