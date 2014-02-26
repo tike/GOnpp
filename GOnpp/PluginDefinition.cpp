@@ -29,13 +29,12 @@
 #include "goCommands/goCommand.h"
 #include "goCommands/goRUN.h"
 #include "AutoCompletion.h"
+#include "Settings.h"
 
-const TCHAR sectionName[] = _T("Insert Extesion");
-const TCHAR keyName[] = _T("doCloseTag");
-const TCHAR configFileName[] = _T("GOnpp.ini");
-
+std::auto_ptr<Settings> settings;
 CmdDlg _cmdDlg;
 std::auto_ptr<AutoCompletion> autocompletion;
+
 
 #ifdef UNICODE 
 	#define generic_itoa _itow
@@ -50,9 +49,6 @@ FuncItem funcItem[nbFunc];
 //
 NppData nppData;
 
-
-TCHAR iniFilePath[MAX_PATH];
-bool doCloseTag = false;
 
 #define DOCKABLE_DEMO_INDEX 4
 
@@ -118,7 +114,7 @@ bool initialize_go_cmd(){
 		if ( ! start && ! end && status ){
 			::MessageBox(nppData._nppHandle,
 				NO_GO_EXE_ERROR, 
-				_T("go configuration error"), MB_OK | MB_ICONERROR);
+				CONFIGURATION_ERROR, MB_OK | MB_ICONERROR);
 		}
 		GO_CMD = tstring(GO_CMD_tmp);
 		return true;
@@ -131,8 +127,7 @@ bool initialize_go_cmd(){
 //
 // Initialize your plugin data here
 // It will be called while plugin loading   
-void pluginInit(HANDLE hModule)
-{
+void pluginInit(HANDLE hModule){
 	// Initialize dockable demo dialog
 	_cmdDlg.init((HINSTANCE)hModule, NULL);
 	GO_CMD_FOUND = initialize_go_cmd();
@@ -143,7 +138,10 @@ void pluginInit(HANDLE hModule)
 //
 void pluginCleanUp()
 {
-	::WritePrivateProfileString(sectionName, keyName, doCloseTag?TEXT("1"):TEXT("0"), iniFilePath);
+	if (! settings->Write()){
+		::MessageBox(nppData._nppHandle, CONFIGFILE_ERROR, CONFIGURATION_ERROR, MB_OK | MB_ICONERROR);
+	}
+	autocompletion.reset();
 	_cmdDlg.destroy();
 	//free(GO_CMD);
 }
@@ -152,26 +150,7 @@ void pluginCleanUp()
 // Initialization of your plugin commands
 // You should fill your plugins commands here
 void commandMenuInit()
-{
-	//
-	// Firstly we get the parameters from your plugin config file (if any)
-	//
-
-	// get path of plugin configuration
-	::SendMessage(nppData._nppHandle, NPPM_GETPLUGINSCONFIGDIR, MAX_PATH, (LPARAM)iniFilePath);
-
-	// if config path doesn't exist, we create it
-	if (::PathFileExists(iniFilePath) == FALSE)
-	{
-		::CreateDirectory(iniFilePath, NULL);
-	}
-
-	// make your plugin config file full file path name
-	::PathAppend(iniFilePath, configFileName);
-
-	// get the parameter value from plugin config
-	doCloseTag = (::GetPrivateProfileInt(sectionName, keyName, 0, iniFilePath) != 0);
-
+{	
 	ShortcutKey *fmtKey = new ShortcutKey;
 	fmtKey->_isAlt = true;
 	fmtKey->_isCtrl = false;
@@ -204,6 +183,16 @@ void commandMenuInit()
 	setCommand(3, _T("go run"), go_run, runKey, false);
 
 	setCommand(DOCKABLE_DEMO_INDEX, _T("show output window"), CmdDlgShow, NULL, false);
+
+	NppWrapper npp = NppWrapper(nppData);
+	tstring settings_filename;
+	if (! npp.get_config_file_name(settings_filename)){
+		::MessageBox(nppData._nppHandle, CONFIGFILE_ERROR, CONFIGURATION_ERROR, MB_OK | MB_ICONERROR);
+	}
+	settings.reset( new Settings(settings_filename));
+	if (! settings->Read()){
+		::MessageBox(nppData._nppHandle, CONFIGFILE_ERROR, CONFIGURATION_ERROR, MB_OK | MB_ICONERROR);
+	}
 }
 
 
@@ -217,6 +206,7 @@ void commandMenuCleanUp()
 	delete funcItem[1]._pShKey;
 	delete funcItem[2]._pShKey;
 	delete funcItem[3]._pShKey;
+	settings->Write();
 }
 
 //

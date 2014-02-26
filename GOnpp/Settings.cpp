@@ -1,12 +1,42 @@
 #include "Settings.h"
 
+#define SETDEF_GOFMT_ON_SAVE 0
+#define SETDEF_AUTO_COMPLETION 0
+#define SETDEF_OPEN_ON_ERROR 0
+#define SETDEF_RUN_AFTER_SUCCESSFULL_BUILD 0
+
 Settings::Settings(tstring& config_file):
 	_config_file(config_file)
 {
+	this->_auto_completion = SETDEF_AUTO_COMPLETION;
+	this->_gofmt_on_save = SETDEF_GOFMT_ON_SAVE;
+	this->_open_on_error = SETDEF_OPEN_ON_ERROR;
+	this->_run_after_successfull_build = SETDEF_RUN_AFTER_SUCCESSFULL_BUILD;
 }
 
 Settings::~Settings(void)
 {
+}
+
+BOOL Settings::Read(void){
+	
+	return TRUE;
+}
+
+BOOL Settings::Write(void){
+	return TRUE;
+}
+
+void Settings::go_fmt_on_save_on(void){
+	this->_gofmt_on_save = 1;
+}
+
+void Settings::go_fmt_on_save_off(void){
+	this->_gofmt_on_save = 0;
+}
+
+BOOL Settings::go_fmt_is_on(void){
+	return this->_gofmt_on_save?TRUE:FALSE;
 }
 
 DWORD Settings::set_value(tstring& section, tstring& key, int value){

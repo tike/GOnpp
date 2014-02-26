@@ -24,7 +24,7 @@
 
 extern FuncItem funcItem[nbFunc];
 extern NppData nppData;
-extern bool doCloseTag;
+
 
 extern CmdDlg _cmdDlg;
 extern std::auto_ptr<AutoCompletion> autocompletion;
