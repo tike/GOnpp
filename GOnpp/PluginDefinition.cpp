@@ -147,7 +147,6 @@ void pluginInit(HANDLE hModule)
 	// Initialize dockable demo dialog
 	_cmdDlg.init((HINSTANCE)hModule, NULL);
 	GO_CMD_FOUND = initialize_go_cmd();
-	autocompletion.reset(new AutoCompletion(nppData));
 }
 
 //
@@ -156,7 +155,6 @@ void pluginInit(HANDLE hModule)
 void pluginCleanUp()
 {
 	::WritePrivateProfileString(sectionName, keyName, doCloseTag?TEXT("1"):TEXT("0"), iniFilePath);
-	autocompletion.reset();
 	_cmdDlg.destroy();
 	free(GO_CMD);
 }
