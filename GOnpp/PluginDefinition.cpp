@@ -61,15 +61,15 @@ bool doCloseTag = false;
 
 // $(GOROOT)\bin\go.exe
 tstring GO_CMD;
-BOOL GO_CMD_FOUND = FALSE;
+bool GO_CMD_FOUND = false;
 
 // initialize the GO_CMD variable to hold the path for go.exe
-BOOL initialize_go_cmd(){
+bool initialize_go_cmd(){
 	// allocate string to hold value obtained from environment variable
 	LPTSTR raw_goroot = (LPTSTR) calloc(MAX_ENVIRON, sizeof(TCHAR));
 	if (raw_goroot == NULL){
 		::MessageBox(nppData._nppHandle, _T("Out of memory, fuck!"), _T("E R R O R"), MB_OK);
-		return FALSE;
+		return false;
 	}
 
 	// allocate memory to hold string "xyz\bin\go.exe"
@@ -78,27 +78,31 @@ BOOL initialize_go_cmd(){
 	if (GO_CMD_tmp == NULL){
 		::MessageBox(nppData._nppHandle, _T("Out of memory, fuck!"), _T("E R R O R"), MB_OK);
 		free(raw_goroot);
-		return FALSE;
+		return false;
 	}
 
 	// if GOBIN is set set assume that go.exe is there
 	DWORD length = ::GetEnvironmentVariable(_T("GOBIN"), raw_goroot, MAX_ENVIRON);
 	if (length != 0){
-		if (::PathCombine(GO_CMD_tmp, raw_goroot, _T("go.exe")) == NULL) return FALSE;
+		if (::PathCombine(GO_CMD_tmp, raw_goroot, _T("go.exe")) == NULL) {
+			return false;
+		}
 		::PathQuoteSpaces(GO_CMD_tmp);
 		GO_CMD = tstring(GO_CMD_tmp);
 		free(raw_goroot);
-		return TRUE;
+		return true;
 	}
 	
 	// if GOROOT is set assume that go.exe is there
 	length = ::GetEnvironmentVariable(_T("GOROOT"), raw_goroot, MAX_ENVIRON);
 	if (length != 0){
-		if (::PathCombine(GO_CMD_tmp, raw_goroot, _T("bin\\go.exe")) == NULL) return FALSE;
+		if (::PathCombine(GO_CMD_tmp, raw_goroot, _T("bin\\go.exe")) == NULL) {
+			return false;
+		}
 		::PathQuoteSpaces(GO_CMD_tmp);
 		GO_CMD = tstring(GO_CMD_tmp);
 		free(raw_goroot);
-		return TRUE;
+		return true;
 	}
 
 	free(raw_goroot);
@@ -117,10 +121,10 @@ BOOL initialize_go_cmd(){
 				_T("go configuration error"), MB_OK | MB_ICONERROR);
 		}
 		GO_CMD = tstring(GO_CMD_tmp);
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 
