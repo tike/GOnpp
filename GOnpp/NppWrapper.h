@@ -8,7 +8,7 @@ class NppWrapper
 public:
 	NppWrapper(const NppData);
 
-	LRESULT send_scintilla(UINT msg, WPARAM, LPARAM);
+	LRESULT send_scintilla(UINT msg, WPARAM, LPARAM=0);
 
 	bool current_file_is_go_file(void);
 	bool reload_all_files(void);

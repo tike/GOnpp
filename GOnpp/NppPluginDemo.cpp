@@ -89,20 +89,25 @@ extern "C" __declspec(dllexport) FuncItem * getFuncsArray(int *nbF)
 
 extern "C" __declspec(dllexport) void beNotified(SCNotification *notifyCode)
 {
-	if (autocompletion->process_notification(*notifyCode)) {
+	if (autocompletion.get() && autocompletion->process_notification(*notifyCode)) {
 		return;
 	}
 
 	switch (notifyCode->nmhdr.code) 
 	{
-		case NPPN_SHUTDOWN:
-		{
-			commandMenuCleanUp();
-		}
+	case NPPN_READY:
+		// see: http://www.brotherstone.co.uk/octopress/blog/2012/08/20/top-10-hints-for-writing-a-notepad-plus-plus-plugin/
+		autocompletion.reset(new AutoCompletion(nppData));
 		break;
 
-		default:
-			return;
+	case NPPN_SHUTDOWN:
+		// see: http://www.brotherstone.co.uk/octopress/blog/2012/08/20/top-10-hints-for-writing-a-notepad-plus-plus-plugin/
+		autocompletion.reset();
+		commandMenuCleanUp();
+		break;
+
+	default:
+		return;
 	}
 }
 
