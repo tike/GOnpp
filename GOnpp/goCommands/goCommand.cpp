@@ -27,32 +27,11 @@ goCommand::goCommand(tstring& cmd, tstring& flags)
 {
 	this->cmd = cmd.substr(0, cmd.size());
 	this->flags = cmd.substr(0, flags.size());
-
-/*	this->currentDir = NULL;
-	this->currentFile = NULL;
-
-	this->goPath = NULL;
-	this->goPkg = NULL;
-
-	this->commandLine = NULL;
-	this->stdOut = NULL;
-	this->stdErr = NULL;
-*/
 }
 
 
-goCommand::~goCommand(void)
+goCommand::~goCommand()
 {
-/*	if ( currentDir != NULL) free(currentDir);
-	if ( currentFile != NULL) free(currentFile);
-
-	if ( goPath != NULL) free(goPath);
-	if ( goPkg != NULL) free(goPkg);
-
-	if ( commandLine != NULL) free(commandLine);
-	if ( stdOut != NULL) free(stdOut);
-	if ( stdErr != NULL) free(stdErr);
-*/
 }
 
 bool goCommand::preRunCmd()

@@ -28,7 +28,7 @@ class goCommand
 {
 public:
 	goCommand(tstring& cmd, tstring& flags);
-	~goCommand(void);
+	virtual ~goCommand();
 
 	bool InitialiseCmd(tstring& go_cmd, tstring& current_file);
 	DWORD RunCmd(void);
