@@ -72,7 +72,7 @@ tstring NppWrapper::get_full_current_filename(){
 BOOL NppWrapper::get_config_file_name(tstring& filepath){
 	TCHAR iniFilePath[MAX_PATH];
 	// get path of plugin configuration
-	::SendMessage(_npp._nppHandle, NPPM_GETPLUGINSCONFIGDIR, MAX_PATH, (LPARAM)iniFilePath);
+	DWORD ret = ::SendMessage(_npp._nppHandle, NPPM_GETPLUGINSCONFIGDIR, MAX_PATH, (LPARAM)iniFilePath);
 
 	// if config path doesn't exist, we create it
 	if (::PathFileExists(iniFilePath) == FALSE)
@@ -82,9 +82,9 @@ BOOL NppWrapper::get_config_file_name(tstring& filepath){
 
 	// make your plugin config file full file path name
 	::PathAppend(iniFilePath, NPP_PLUGIN_NAME);
-	::PathAppend(iniFilePath, _T(".ini"));
 
 	filepath.clear();
-	filepath.append(iniFilePath, MAX_PATH);
+	filepath.append(iniFilePath);
+	filepath.append(_T(".ini"));
 	return TRUE;
 }
