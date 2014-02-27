@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GOnpp", "GOnpp\GOnpp.vcxproj", "{F51EF36E-0275-409D-AEDA-BB9B77E7C639}"
 EndProject
 Global
@@ -10,7 +10,7 @@ Global
 		Debug|Win32 = Debug|Win32
 		Release|Win32 = Release|Win32
 		Unicode Debug|Win32 = Unicode Debug|Win32
-		Unicode Realease|Win32 = Unicode Realease|Win32
+		Unicode Release|Win32 = Unicode Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{F51EF36E-0275-409D-AEDA-BB9B77E7C639}.ANSI Debug|Win32.ActiveCfg = ANSI Debug|Win32
@@ -23,8 +23,8 @@ Global
 		{F51EF36E-0275-409D-AEDA-BB9B77E7C639}.Release|Win32.Build.0 = ANSI Release|Win32
 		{F51EF36E-0275-409D-AEDA-BB9B77E7C639}.Unicode Debug|Win32.ActiveCfg = Unicode Debug|Win32
 		{F51EF36E-0275-409D-AEDA-BB9B77E7C639}.Unicode Debug|Win32.Build.0 = Unicode Debug|Win32
-		{F51EF36E-0275-409D-AEDA-BB9B77E7C639}.Unicode Realease|Win32.ActiveCfg = Unicode Realease|Win32
-		{F51EF36E-0275-409D-AEDA-BB9B77E7C639}.Unicode Realease|Win32.Build.0 = Unicode Realease|Win32
+		{F51EF36E-0275-409D-AEDA-BB9B77E7C639}.Unicode Release|Win32.ActiveCfg = Unicode Release|Win32
+		{F51EF36E-0275-409D-AEDA-BB9B77E7C639}.Unicode Release|Win32.Build.0 = Unicode Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
