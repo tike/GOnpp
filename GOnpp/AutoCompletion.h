@@ -18,5 +18,6 @@ protected:
 
 private:
 	NppWrapper _npp;
+	tstring _cmd;
 };
 
