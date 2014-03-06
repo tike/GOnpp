@@ -7,8 +7,6 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		ANSI Debug|Win32 = ANSI Debug|Win32
 		ANSI Release|Win32 = ANSI Release|Win32
-		Debug|Win32 = Debug|Win32
-		Release|Win32 = Release|Win32
 		Unicode Debug|Win32 = Unicode Debug|Win32
 		Unicode Release|Win32 = Unicode Release|Win32
 	EndGlobalSection
@@ -17,10 +15,6 @@ Global
 		{F51EF36E-0275-409D-AEDA-BB9B77E7C639}.ANSI Debug|Win32.Build.0 = ANSI Debug|Win32
 		{F51EF36E-0275-409D-AEDA-BB9B77E7C639}.ANSI Release|Win32.ActiveCfg = ANSI Release|Win32
 		{F51EF36E-0275-409D-AEDA-BB9B77E7C639}.ANSI Release|Win32.Build.0 = ANSI Release|Win32
-		{F51EF36E-0275-409D-AEDA-BB9B77E7C639}.Debug|Win32.ActiveCfg = ANSI Debug|Win32
-		{F51EF36E-0275-409D-AEDA-BB9B77E7C639}.Debug|Win32.Build.0 = ANSI Debug|Win32
-		{F51EF36E-0275-409D-AEDA-BB9B77E7C639}.Release|Win32.ActiveCfg = ANSI Release|Win32
-		{F51EF36E-0275-409D-AEDA-BB9B77E7C639}.Release|Win32.Build.0 = ANSI Release|Win32
 		{F51EF36E-0275-409D-AEDA-BB9B77E7C639}.Unicode Debug|Win32.ActiveCfg = Unicode Debug|Win32
 		{F51EF36E-0275-409D-AEDA-BB9B77E7C639}.Unicode Debug|Win32.Build.0 = Unicode Debug|Win32
 		{F51EF36E-0275-409D-AEDA-BB9B77E7C639}.Unicode Release|Win32.ActiveCfg = Unicode Release|Win32
