@@ -31,18 +31,19 @@ bool gocode::Run(void){
         CommandExec exec(_cmdline, tstring(_T("C:\\")));
 
         if ( ! exec.Start()) {
-		return 200;
+		return false;
 	}
 	if ( ! exec.Wait()) {
-		return 201;
+		return false;
 	}
 	if ( ! exec.ReadOutput()) {
-		return 203;
+		return false;
 	}
 
         _exitStatus = exec.ExitStatus();
 	_rawStdOut = exec.GetStdOut();
 	_rawStdErr = exec.GetStdErr();
+        return true;
 }
 
 void gocode::splitString(tstring& in, vector<tstring>& into, TCHAR sep, int maxitems){

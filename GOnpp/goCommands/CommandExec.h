@@ -27,19 +27,19 @@ public:
 	CommandExec(tstring& cmd, tstring& dir);
 	~CommandExec(void);
 
-	BOOL Start(void);
-	BOOL Wait(void);
+	bool Start(void);
+	bool Wait(void);
 
 	DWORD ExitStatus(void);
 
-	BOOL ReadOutput(void);
+	bool ReadOutput(void);
 	tstring GetStdOut(void);
 	tstring GetStdErr(void);
 	tstring GetCombined(void);
 
 protected:
-	BOOL setupPipe(PHANDLE read, PHANDLE write);
-	BOOL readOutput(HANDLE handle, tstring& output);
+	bool setupPipe(PHANDLE read, PHANDLE write);
+	bool readOutput(HANDLE handle, tstring& output);
 	tstring cmd;
 	tstring dir;
 
@@ -52,13 +52,13 @@ protected:
 	tstring stdOut;
 	HANDLE stdOutRd;
 	HANDLE stdOutWr;
-	BOOL StdOutRead;
-	BOOL StdOutClosed;
+	bool StdOutRead;
+	bool StdOutClosed;
 
 	HANDLE stdErrRd;
 	HANDLE stdErrWr;
 	tstring stdErr;
-	BOOL StdErrRead;
-	BOOL StdErrClosed;
+	bool StdErrRead;
+	bool StdErrClosed;
 };
 

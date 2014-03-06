@@ -66,17 +66,17 @@ CommandExec::~CommandExec(void)
 	if( ! this->StdErrClosed) CloseHandle(this->stdErrRd);
 }
 
-BOOL CommandExec::setupPipe(PHANDLE read, PHANDLE write){
+bool CommandExec::setupPipe(PHANDLE read, PHANDLE write){
 	if ( ! CreatePipe(read, write, &this->sa, 0) ){
-		return FALSE;
+		return false;
 	} 
 	if ( ! SetHandleInformation(*read, HANDLE_FLAG_INHERIT, 0) ){
-		return FALSE;
+		return false;
 	}
-	return TRUE;
+	return true;
 }
 
-BOOL CommandExec::Start(void)
+bool CommandExec::Start(void)
 {
 	if( ! this->setupPipe(&this->stdOutRd, &this->stdOutWr)) return FALSE;
 	if( ! this->setupPipe(&this->stdErrRd, &this->stdErrWr)) return FALSE;
@@ -98,14 +98,14 @@ BOOL CommandExec::Start(void)
 		);
 	CloseHandle(this->stdOutWr);
 	CloseHandle(this->stdErrWr);
-	return processStarted;
+	return processStarted?true:false;
 }
 
 #define BUFSIZE 4096
 // reads from the given handle until EOF
 // returns a string containing all output
 // remember to FREE THE RESULTING STRING when you're done with it!
-BOOL CommandExec::readOutput(HANDLE handle, tstring& output){
+bool CommandExec::readOutput(HANDLE handle, tstring& output){
 	DWORD outputLen = BUFSIZE * 10;
 	BOOL bSuccess = FALSE;
 	DWORD Read = 0;
@@ -120,7 +120,9 @@ BOOL CommandExec::readOutput(HANDLE handle, tstring& output){
 		//upon reaching EOF, we will break out of the loop here,
 		//during the next iteration (after the last read has been 
 		//properly processed...
-		if( ! bSuccess || Read == 0 ) break;
+		if( ! bSuccess || Read == 0 ){
+                        break;
+                }
 
 		#ifdef UNICODE
 			// convert chBuf to TCHAR
@@ -151,18 +153,24 @@ BOOL CommandExec::readOutput(HANDLE handle, tstring& output){
 
 		output.append(TBuf); 
 	}
-	return TRUE;
+	return true;
 }
 
-BOOL CommandExec::Wait(void)
+
+bool CommandExec::Wait(void)
 {
-	if (!GetExitCodeProcess(this->pi.hProcess, &this->exitStatus)) return FALSE;
+	if ( ! GetExitCodeProcess(this->pi.hProcess, &this->exitStatus)){
+                return true;
+        }
 	while(this->exitStatus == STILL_ACTIVE){
-		if (!GetExitCodeProcess(this->pi.hProcess, &this->exitStatus)) return FALSE;
+		if ( ! GetExitCodeProcess(this->pi.hProcess, &this->exitStatus)){
+                        return false;
+                }
 	}
+
 	CloseHandle(this->pi.hProcess);
 	CloseHandle(this->pi.hThread);
-	return TRUE;
+	return true;
 }
 
 DWORD CommandExec::ExitStatus(void)
@@ -170,21 +178,25 @@ DWORD CommandExec::ExitStatus(void)
 	return this->exitStatus;
 }
 
-BOOL CommandExec::ReadOutput(void)
+bool CommandExec::ReadOutput(void)
 {
 	if ( ! this->readOutput(this->stdOutRd, this->stdOut)){
-		return FALSE;
+		return false;
 	}
-	this->StdOutRead = TRUE;
-	if (CloseHandle(this->stdOutRd)) this->StdOutClosed = TRUE;
+	this->StdOutRead = true;
+	if (CloseHandle(this->stdOutRd)){
+                this->StdOutClosed = true;
+        }
 
 	if ( ! this->readOutput(this->stdErrRd, this->stdErr)){
-		return FALSE;
+		return false;
 	}
-	this->StdErrRead = TRUE;
-	if (CloseHandle(this->stdErrRd)) this->StdErrClosed = TRUE;
+	this->StdErrRead = true;
+	if (CloseHandle(this->stdErrRd)){
+                this->StdErrClosed = true;
+        }
 	
-	return TRUE;
+	return true;
 }
 
 tstring CommandExec::GetStdOut(void){
