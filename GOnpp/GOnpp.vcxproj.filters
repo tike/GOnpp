@@ -48,6 +48,9 @@
     <ClCompile Include="tstring.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="goCommands\gocode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DockingFeature\DockingDlgInterface.h">
@@ -105,6 +108,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Settings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="goCommands\gocode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

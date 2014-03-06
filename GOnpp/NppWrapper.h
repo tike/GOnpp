@@ -16,6 +16,8 @@ public:
 	void switch_to_file(tstring filename);
 	tstring get_full_current_filename();
 
+        int get_current_offset(void);
+
 	// config file operations
 	BOOL get_config_file_name(tstring& filepath);
 

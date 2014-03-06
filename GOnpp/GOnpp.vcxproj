@@ -203,6 +203,7 @@
     <ClCompile Include="AutoCompletion.cpp" />
     <ClCompile Include="DockingFeature\CmdDlg.cpp" />
     <ClCompile Include="goCommands\CommandExec.cpp" />
+    <ClCompile Include="goCommands\gocode.cpp" />
     <ClCompile Include="goCommands\goCommand.cpp" />
     <ClCompile Include="goCommands\goRUN.cpp" />
     <ClCompile Include="NppPluginDemo.cpp" />
@@ -218,6 +219,7 @@
     <ClInclude Include="DockingFeature\CmdDlg.h" />
     <ClInclude Include="ErrorMessages.h" />
     <ClInclude Include="goCommands\CommandExec.h" />
+    <ClInclude Include="goCommands\gocode.h" />
     <ClInclude Include="goCommands\goCommand.h" />
     <ClInclude Include="goCommands\goRUN.h" />
     <ClInclude Include="menuCmdID.h" />

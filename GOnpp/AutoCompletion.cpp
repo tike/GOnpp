@@ -4,6 +4,7 @@
 #include "PluginInterface.h"
 #include "Scintilla.h"
 
+#include "goCommands/gocode.h"
 #include "CmdDlg.h"
 
 namespace {
@@ -102,6 +103,30 @@ bool AutoCompletion::process_notification(SCNotification &n)
 	return false;
 }
 
+bool AutoCompletion::invoke_gocode(void){
+        int offset = _npp.get_current_offset();
+        if (offset == -1){
+                // error failed to receive offset...
+                return false;
+        }
+        tstring file = _npp.get_full_current_filename();
+        gocode goc;
+        goc.init(file, offset);
+        if (! goc.Run()){
+              // error failed to run;
+              return false;
+        }
+
+        vector<completion> completions;
+        if ( ! goc.getCompletions(completions)){
+                // error failed to receive completions
+                return false;
+        }
+
+        
+        return true;
+}
+
 extern CmdDlg _cmdDlg;
 
 bool AutoCompletion::on_char_added(int c)
@@ -109,6 +134,7 @@ bool AutoCompletion::on_char_added(int c)
 	_cmdDlg.setText(tstring(1, c));
 	switch (c) {
 	case '.':
+                invoke_gocode();
 		_npp.send_scintilla(SCI_AUTOCSETSEPARATOR, (WPARAM)'\n');
 		_npp.send_scintilla(SCI_AUTOCSHOW, 0, (LPARAM)"foo\nbar\nbaz");
 		//_npp.send_scintilla(SCI_AUTOCSHOW, 0, (LPARAM)"foo bar baz");

@@ -15,6 +15,7 @@ public:
 
 protected:
 	bool on_char_added(int c);
+        bool invoke_gocode(void);
 
 private:
 	NppWrapper _npp;

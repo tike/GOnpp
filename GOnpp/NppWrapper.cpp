@@ -88,3 +88,7 @@ BOOL NppWrapper::get_config_file_name(tstring& filepath){
 	filepath.append(_T(".ini"));
 	return TRUE;
 }
+
+int NppWrapper::get_current_offset(void){
+        return ::SendMessage(_npp._scintillaMainHandle, SCI_GETCURRENTPOS, 0, 0);
+}
