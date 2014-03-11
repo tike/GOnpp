@@ -15,9 +15,11 @@ public:
 
 protected:
 	bool on_char_added(int c);
-	bool invoke_gocode();
 
 private:
+	bool invoke_gocode();
+	static tstring search_cmd();
+
 	NppWrapper _npp;
 	tstring _cmd;
 };

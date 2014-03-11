@@ -3,8 +3,8 @@
 #include "tstring.h"
 
 class Tokens {
-	const tstring &_src;
-	const tstring &_separator;
+	const tstring _src;
+	const tstring _separator;
 	tstring::size_type _begin, _end;
 
 public:

@@ -19,17 +19,11 @@ class gocode
 {
 public:
         gocode(const tstring& exe_path);
-
-        bool run_for(tstring& go_file, int offset);
-
+        bool run_for(const tstring &go_file, int offset, vector<completion> &completions);
         DWORD _exitStatus;
-
-        void get_completions(vector<completion>& completions);
 
 protected:
         tstring _exe_path;
-
-        tstring _rawStdOut;
-        tstring _rawStdErr;
+        void parse_completions(const tstring &console, vector<completion>& completions);
 };
 

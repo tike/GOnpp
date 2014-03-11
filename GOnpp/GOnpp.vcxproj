@@ -212,6 +212,7 @@
     <ClCompile Include="DockingFeature\StaticDialog.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="tstring.cpp" />
+    <ClCompile Include="WcharMbcsConverter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AutoCompletion.h" />
@@ -235,6 +236,7 @@
     <ClInclude Include="Scintilla.h" />
     <ClInclude Include="DockingFeature\StaticDialog.h" />
     <ClInclude Include="DockingFeature\Window.h" />
+    <ClInclude Include="WcharMbcsConverter.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DockingFeature\goLine.rc" />

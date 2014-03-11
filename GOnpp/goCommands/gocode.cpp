@@ -11,7 +11,7 @@ gocode::gocode(const tstring &exe_path)
 {
 }
 
-bool gocode::run_for(tstring& go_file, int offset)
+bool gocode::run_for(const tstring &go_file, int offset, vector<completion> &completions)
 {
         std::basic_ostringstream<TCHAR> cmdline;
 	//FIXME: quote/escape paths below as appropriate
@@ -36,14 +36,13 @@ bool gocode::run_for(tstring& go_file, int offset)
 	}
 
         _exitStatus = exec.ExitStatus();
-	_rawStdOut = exec.GetStdOut();
-	_rawStdErr = exec.GetStdErr();
+	parse_completions(exec.GetStdOut(), completions);
         return true;
 }
 
-void gocode::get_completions(vector<completion>& completions)
+void gocode::parse_completions(const tstring &console, vector<completion>& completions)
 {
-	for (Tokens line(_rawStdOut, _T("\n")); line.next(); ) {
+	for (Tokens line(console, _T("\n")); line.next(); ) {
 	        vector<tstring> parts;
 		for (Tokens part(line.get(), _T(",,")); part.next(); ) {
 			parts.push_back(part.get());

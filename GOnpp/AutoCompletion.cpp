@@ -7,12 +7,13 @@
 #include "goCommands/gocode.h"
 #include "CmdDlg.h"
 #include "tokens.h"
+#include "WcharMbcsConverter.h"
 
 namespace {
 	tstring tgetenv(const tstring &name)
 	{
 		std::vector<TCHAR> buf(32767);
-		DWORD length = ::GetEnvironmentVariable(_T("PATH"), &buf[0], buf.size());
+		DWORD length = ::GetEnvironmentVariable(name.c_str(), &buf[0], buf.size());
 		if (length == 0) {
 			return tstring();
 		}
@@ -30,7 +31,7 @@ namespace {
 	{
 		for (Tokens t(search_roots, _T(";")); t.next(); ) {
 			std::vector<TCHAR> buf(MAX_PATH);
-			LPTSTR ok = ::PathCombine(&buf[0], t.get().c_str(), _T("gocode.exe"));
+			LPTSTR ok = ::PathCombine(&buf[0], t.get().c_str(), relative.c_str());
 			if (!ok) {
 				continue;
 			}
@@ -47,20 +48,26 @@ namespace {
 
 AutoCompletion::AutoCompletion(NppWrapper npp)
 	: _npp(npp)
+	, _cmd(search_cmd())
 {
-	//TODO: search also in path provided in .ini file
-
-	if (_cmd.length() == 0) {
-		find_file_in_path(_T("gocode.exe"), tgetenv(_T("PATH")), _cmd);
-	}
-	if (_cmd.length() == 0) {
-		find_file_in_path(_T("bin\\gocode.exe"), tgetenv(_T("GOPATH")), _cmd);
-	}
 }
 
 
 AutoCompletion::~AutoCompletion()
 {
+}
+
+tstring AutoCompletion::search_cmd()
+{
+	//TODO: search also in path provided in .ini file
+	tstring cmd;
+	if (cmd.length() == 0) {
+		find_file_in_path(_T("gocode.exe"), tgetenv(_T("PATH")), cmd);
+	}
+	if (cmd.length() == 0) {
+		find_file_in_path(_T("bin\\gocode.exe"), tgetenv(_T("GOPATH")), cmd);
+	}
+	return cmd;
 }
 
 bool AutoCompletion::process_notification(SCNotification &n)
@@ -87,16 +94,32 @@ bool AutoCompletion::invoke_gocode()
         tstring file = _npp.get_full_current_filename();
 
 	if (_cmd.empty()) {
-		return false; //FIXME: search again for gocode.exe first, maybe user installed it
+		_cmd = search_cmd();
 	}
+	if (_cmd.empty()) {
+		return false;
+	}
+
+        vector<completion> completions;
         gocode goc(_cmd);
-        if (!goc.run_for(file, offset)) {
+        if (!goc.run_for(file, offset, completions)) {
               // error, failed to run
               return false;
         }
 
-        vector<completion> completions;
-        goc.get_completions(completions);
+	tstring buf;
+	for (vector<completion>::iterator c=completions.begin(); c!=completions.end(); ++c) {
+		if (!buf.empty()) {
+			buf.append(_T("\n"));
+		}
+		buf.append(c->name);
+	}
+
+	//unsigned int codepage = _npp.send_scintilla(SCI_GETCODEPAGE);
+	_npp.send_scintilla(SCI_AUTOCSETSEPARATOR, (WPARAM)'\n');
+	std::auto_ptr<char> utf8buf = WcharMbcsConverter::tchar2char(buf.c_str());
+	_npp.send_scintilla(SCI_AUTOCSHOW, 0, (LPARAM)utf8buf.get());
+
 
         return true;
 }
@@ -109,8 +132,8 @@ bool AutoCompletion::on_char_added(int c)
 	switch (c) {
 	case '.':
 		invoke_gocode();
-		_npp.send_scintilla(SCI_AUTOCSETSEPARATOR, (WPARAM)'\n');
-		_npp.send_scintilla(SCI_AUTOCSHOW, 0, (LPARAM)"foo\nbar\nbaz");
+		//_npp.send_scintilla(SCI_AUTOCSETSEPARATOR, (WPARAM)'\n');
+		//_npp.send_scintilla(SCI_AUTOCSHOW, 0, (LPARAM)"foo\nbar\nbaz");
 		//_npp.send_scintilla(SCI_AUTOCSHOW, 0, (LPARAM)"foo bar baz");
 	}
 	return false;
