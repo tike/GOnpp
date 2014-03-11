@@ -83,6 +83,30 @@ bool AutoCompletion::process_notification(SCNotification &n)
 	return false;
 }
 
+// find out length of word before cursor
+int AutoCompletion::detect_prefix_length()
+{
+	LRESULT line_length = _npp.send_scintilla(SCI_GETCURLINE, 0, 0);
+	if (line_length > 4000) { // attempt at Defensive Coding
+		return 0;
+	}
+	std::vector<char> buf(line_length);
+	LRESULT caret = _npp.send_scintilla(SCI_GETCURLINE, buf.size(), (LPARAM)&buf[0]);
+	// FIXME: verify that we're in CODEPAGE utf-8, otherwise `return 0;`
+	int prefix=0;
+	caret--;  // we're interested only in characters to the left of the cursor
+	for (; caret>=0; caret--, prefix++) {
+		// FIXME: verify that `caret` points to what I think
+		char c = buf[caret];
+		if ((c>='a' && c<='z') || (c>='A' && c<='Z') || (c>='0' && c<='9') || (c=='_') || (c&0x80)) {
+			// FIXME: what about numbers, is this OK?
+			continue;
+		}
+		return prefix;
+	}
+	return prefix;
+}
+
 bool AutoCompletion::invoke_gocode()
 {
 	int offset = _npp.send_scintilla(SCI_GETCURRENTPOS);
@@ -120,10 +144,12 @@ bool AutoCompletion::invoke_gocode()
 		buf.append(c->name);
 	}
 
+	int prefix_length = detect_prefix_length();
+
 	//unsigned int codepage = _npp.send_scintilla(SCI_GETCODEPAGE);
 	_npp.send_scintilla(SCI_AUTOCSETSEPARATOR, (WPARAM)'\n');
 	std::vector<char> utf8buf = WcharMbcsConverter::tchar2char(buf.c_str());
-	_npp.send_scintilla(SCI_AUTOCSHOW, 0, (LPARAM)&utf8buf[0]);
+	_npp.send_scintilla(SCI_AUTOCSHOW, prefix_length, (LPARAM)&utf8buf[0]);
 
 
         return true;

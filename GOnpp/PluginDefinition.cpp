@@ -50,7 +50,7 @@ FuncItem funcItem[nbFunc];
 NppData nppData;
 
 
-#define DOCKABLE_DEMO_INDEX 4
+#define DOCKABLE_DEMO_INDEX 5
 
 // Maximum length of environment variables.
 #define MAX_ENVIRON  32767
@@ -146,6 +146,18 @@ void pluginCleanUp()
 	//free(GO_CMD);
 }
 
+namespace {
+
+void go_code()
+{
+	if (!autocompletion.get()) {
+		return;
+	}
+	autocompletion->invoke_gocode();
+}
+
+} // anonymous namespace
+
 //
 // Initialization of your plugin commands
 // You should fill your plugins commands here
@@ -182,6 +194,14 @@ void commandMenuInit()
 
 	setCommand(3, _T("go run"), go_run, runKey, false);
 
+	ShortcutKey *gocodeKey = new ShortcutKey;
+	gocodeKey->_isAlt = true;
+	gocodeKey->_isCtrl = false;
+	gocodeKey->_isShift = false;
+	gocodeKey->_key = 'O'; // VK_O
+
+	setCommand(4, _T("gocode"), go_code, gocodeKey, false);
+
 	setCommand(DOCKABLE_DEMO_INDEX, _T("show output window"), CmdDlgShow, NULL, false);
 
 	NppWrapper npp = NppWrapper(nppData);
@@ -206,6 +226,7 @@ void commandMenuCleanUp()
 	delete funcItem[1]._pShKey;
 	delete funcItem[2]._pShKey;
 	delete funcItem[3]._pShKey;
+	delete funcItem[4]._pShKey;
 	settings->Write();
 }
 

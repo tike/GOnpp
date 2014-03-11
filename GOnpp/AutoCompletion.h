@@ -12,13 +12,14 @@ public:
 	~AutoCompletion();
 
 	bool process_notification(SCNotification &n);
+	bool invoke_gocode();
 
 protected:
 	bool on_char_added(int c);
 
 private:
-	bool invoke_gocode();
 	static tstring search_cmd();
+	int detect_prefix_length();
 
 	NppWrapper _npp;
 	tstring _cmd;
