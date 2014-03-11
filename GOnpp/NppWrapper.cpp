@@ -18,6 +18,11 @@ LRESULT NppWrapper::send_scintilla(UINT msg, WPARAM wparam, LPARAM lparam)
 	return ::SendMessage(_npp._scintillaMainHandle, msg, wparam, lparam);
 }
 
+LRESULT NppWrapper::send_npp(UINT msg, WPARAM wparam, LPARAM lparam)
+{
+	return ::SendMessage(_npp._nppHandle, msg, wparam, lparam);
+}
+
 // checks the current files extention and compares it to ".go"
 // returns TRUE on match, FALSE otherwise
 bool NppWrapper::current_file_is_go_file(void){
@@ -62,9 +67,10 @@ void NppWrapper::switch_to_file(tstring filename){
 	::SendMessage(_npp._nppHandle, NPPM_SWITCHTOFILE, 0, (LPARAM) filename.c_str());
 }
 
-tstring NppWrapper::get_full_current_filename(){
+tstring NppWrapper::get_full_current_filename()
+{
 	TCHAR full_current_file[MAX_PATH];
-	::SendMessage(_npp._nppHandle, NPPM_GETFULLCURRENTPATH, MAX_PATH, (LPARAM) full_current_file);
+	send_npp(NPPM_GETFULLCURRENTPATH, MAX_PATH, (LPARAM) full_current_file);
 	return tstring(full_current_file);
 }
 
@@ -87,8 +93,4 @@ BOOL NppWrapper::get_config_file_name(tstring& filepath){
 	filepath.append(iniFilePath);
 	filepath.append(_T(".ini"));
 	return TRUE;
-}
-
-int NppWrapper::get_current_offset(void){
-        return ::SendMessage(_npp._scintillaMainHandle, SCI_GETCURRENTPOS, 0, 0);
 }

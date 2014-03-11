@@ -11,20 +11,15 @@ gocode::gocode(void)
         _flags = tstring(_T("-f=\"csv\""));
 }
 
-
-gocode::~gocode(void)
-{
-}
-
 void gocode::init(tstring& file, int offset){
-        std::basic_ostringstream<TCHAR> cmdlineSS;
-        cmdlineSS << _execpath << _T(" ");
-        cmdlineSS << _flags << _T(" ");
-        cmdlineSS << _T("-in=\"") << file << _T("\" ");
-        cmdlineSS << _T("autocomplete") << _T(" ");
-        cmdlineSS << offset;
-
-        _cmdline = cmdlineSS.str();
+        std::basic_ostringstream<TCHAR> buf;
+        buf
+		<< _execpath << _T(" ")
+		<< _flags << _T(" ")
+		<< _T("-in=\"") << file << _T("\" ")
+		<< _T("autocomplete") << _T(" ")
+		<< offset;
+        _cmdline = buf.str();
 }
 
 bool gocode::Run(void){

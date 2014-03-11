@@ -8,23 +8,22 @@
 using namespace std;
 
 
-typedef struct completion_s{
+struct completion {
         tstring type;
         tstring something;
         tstring name;
         tstring otherthing;
         tstring signature;
-} completion;
+};
 
 
 class gocode
 {
 public:
-        gocode(void);
-        ~gocode(void);
+        gocode();
 
         void init(tstring& file, int offset);
-        bool Run(void);
+        bool Run();
 
         DWORD _exitStatus;
 
