@@ -121,8 +121,8 @@ bool AutoCompletion::invoke_gocode()
 
 	//unsigned int codepage = _npp.send_scintilla(SCI_GETCODEPAGE);
 	_npp.send_scintilla(SCI_AUTOCSETSEPARATOR, (WPARAM)'\n');
-	std::auto_ptr<char> utf8buf = WcharMbcsConverter::tchar2char(buf.c_str());
-	_npp.send_scintilla(SCI_AUTOCSHOW, 0, (LPARAM)utf8buf.get());
+	std::vector<char> utf8buf = WcharMbcsConverter::tchar2char(buf.c_str());
+	_npp.send_scintilla(SCI_AUTOCSHOW, 0, (LPARAM)&utf8buf[0]);
 
 
         return true;
