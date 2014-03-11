@@ -83,11 +83,15 @@ bool AutoCompletion::invoke_gocode()
 		// error failed to receive offset...
 		return false;
 	}
+
         tstring file = _npp.get_full_current_filename();
-        gocode goc;
-        goc.init(file, offset);
-        if (! goc.run()){
-              // error failed to run;
+
+	if (_cmd.empty()) {
+		return false; //FIXME: search again for gocode.exe first, maybe user installed it
+	}
+        gocode goc(_cmd);
+        if (!goc.run_for(file, offset)) {
+              // error, failed to run
               return false;
         }
 

@@ -21,11 +21,10 @@
 #undef min
 #endif
 
-CommandExec::CommandExec(tstring& cmd, tstring& dir)
+CommandExec::CommandExec(const tstring& cmd, const tstring& dir)
+	: cmd(cmd)
+	, dir(dir)
 {
-	this->cmd = tstring(cmd);
-	this->dir = tstring(dir);
-
 	memset(&this->sa, 0, sizeof(SECURITY_ATTRIBUTES));
 	this->sa.nLength = sizeof(SECURITY_ATTRIBUTES); 
 	this->sa.bInheritHandle = TRUE; 

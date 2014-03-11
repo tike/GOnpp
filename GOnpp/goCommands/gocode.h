@@ -18,24 +18,16 @@ struct completion {
 class gocode
 {
 public:
-        gocode();
+        gocode(const tstring& exe_path);
 
-        void init(tstring& file, int offset);
-        bool run();
+        bool run_for(tstring& go_file, int offset);
 
         DWORD _exitStatus;
 
         void get_completions(vector<completion>& completions);
 
 protected:
-        void split_string(const tstring& in, vector<tstring>& into, const tstring& sep);
-
-        tstring _execpath;
-        tstring _flags;
-        tstring _filename;
-        int _offset;
-
-        tstring _cmdline;
+        tstring _exe_path;
 
         tstring _rawStdOut;
         tstring _rawStdErr;

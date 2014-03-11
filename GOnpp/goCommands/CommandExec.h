@@ -24,7 +24,7 @@
 class CommandExec
 {
 public:
-	CommandExec(tstring& cmd, tstring& dir);
+	CommandExec(const tstring& cmd, const tstring& dir);
 	~CommandExec(void);
 
 	bool Start(void);

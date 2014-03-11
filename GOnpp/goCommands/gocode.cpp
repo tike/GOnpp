@@ -6,27 +6,24 @@
 #include "gocode.h"
 
 
-gocode::gocode()
+gocode::gocode(const tstring &exe_path)
+	: _exe_path(exe_path)
 {
-        _execpath = tstring(_T("gocode.exe"));
-        _flags = tstring(_T("-f=\"csv\""));
 }
 
-void gocode::init(tstring& file, int offset)
+bool gocode::run_for(tstring& go_file, int offset)
 {
-        std::basic_ostringstream<TCHAR> buf;
-        buf
-		<< _execpath << _T(" ")
-		<< _flags << _T(" ")
-		<< _T("-in=\"") << file << _T("\" ")
+        std::basic_ostringstream<TCHAR> cmdline;
+	//FIXME: quote/escape paths below as appropriate
+        cmdline
+		<< _exe_path << _T(" ")
+		<< _T("-f=\"csv\"") << _T(" ")
+		<< _T("-in=\"") << go_file << _T("\" ")
 		<< _T("autocomplete") << _T(" ")
 		<< offset;
-        _cmdline = buf.str();
-}
 
-bool gocode::run()
-{
-        CommandExec exec(_cmdline, tstring(_T("C:\\")));
+	// FIXME: don't use C:\ below, but find out some real, safe, existing directory (not all computers have C:\)
+	CommandExec exec(cmdline.str(), _T("C:\\"));
 
         if ( ! exec.Start()) {
 		return false;
