@@ -173,6 +173,8 @@ bool AutoCompletion::invoke_gocode()
         return true;
 }
 
+extern CmdDlg _cmdDlg;
+
 bool AutoCompletion::show_calltip()
 {
 	_npp.send_scintilla(SCI_CALLTIPCANCEL);
@@ -233,14 +235,16 @@ bool AutoCompletion::show_calltip()
 	}
 
 	std::vector<completion> completions;
-	if (!run_gocode(pos, completions)) {
+	if (!run_gocode(pos-long(buf.size())+long(i+1), completions)) {
 		return false;
 	}
 
+	_cmdDlg.setText(_T("calltips\n"));
 	for (std::vector<completion>::iterator c=completions.begin(); c!=completions.end(); ++c) {
+		_cmdDlg.appendText(c->type + _T(",,") + c->name + _T(",,") + c->signature);
 		if (c->type == _T("func") && c->signature.length()>4) {
 			std::vector<char> sig = WcharMbcsConverter::tchar2char(c->signature.c_str() + 4);
-			_npp.send_scintilla(SCI_CALLTIPSHOW, pos+long(-buf.size()+paren_i+1), (LPARAM)&sig[0]);
+			_npp.send_scintilla(SCI_CALLTIPSHOW, pos-long(buf.size())+long(paren_i+1), (LPARAM)&sig[0]);
 		}
 	}
 
