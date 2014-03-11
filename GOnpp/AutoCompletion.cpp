@@ -91,6 +91,7 @@ bool AutoCompletion::invoke_gocode()
 		return false;
 	}
 
+	//TODO: instead of saving current file, pipe its contents into gocode.exe's stdin
 	_npp.send_npp(NPPM_SAVECURRENTFILE);
 
         tstring file = _npp.get_full_current_filename();
@@ -99,6 +100,7 @@ bool AutoCompletion::invoke_gocode()
 		_cmd = search_cmd();
 	}
 	if (_cmd.empty()) {
+		//FIXME: return an error message and show it in the end
 		return false;
 	}
 
