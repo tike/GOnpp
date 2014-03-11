@@ -28,7 +28,7 @@
 #include "CmdDlg.h"
 #include "goCommands/goCommand.h"
 #include "goCommands/goRUN.h"
-#include "AutoCompletion.h"
+#include "AutoCompletion/AutoCompletion.h"
 #include "Settings.h"
 
 std::auto_ptr<Settings> settings;

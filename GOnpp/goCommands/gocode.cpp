@@ -1,7 +1,7 @@
 #include <sstream>
 
 #include "CommandExec.h"
-#include "tokens.h"
+#include "StringUtils/tokens.h"
 
 #include "gocode.h"
 

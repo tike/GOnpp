@@ -20,7 +20,7 @@
 #include <windows.h>
 #include "PluginInterface.h"
 #include "CommandExec.h"
-#include "tstring.h"
+#include "StringUtils/tstring.h"
 
 #define MAX_ENVIRON  32767
 

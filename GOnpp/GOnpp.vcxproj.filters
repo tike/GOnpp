@@ -36,22 +36,22 @@
     <ClCompile Include="DockingFeature\CmdDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AutoCompletion.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="NppWrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Settings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tstring.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="goCommands\gocode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WcharMbcsConverter.cpp">
+    <ClCompile Include="AutoCompletion\AutoCompletion.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StringUtils\tstring.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StringUtils\WcharMbcsConverter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -101,13 +101,7 @@
     <ClInclude Include="ErrorMessages.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AutoCompletion.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="NppWrapper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="tstring.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Settings.h">
@@ -116,10 +110,16 @@
     <ClInclude Include="goCommands\gocode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="tokens.h">
+    <ClInclude Include="AutoCompletion\AutoCompletion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="WcharMbcsConverter.h">
+    <ClInclude Include="StringUtils\tokens.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StringUtils\tstring.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StringUtils\WcharMbcsConverter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

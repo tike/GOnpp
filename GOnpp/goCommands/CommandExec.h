@@ -18,7 +18,7 @@
 
 #include <tchar.h>
 #include <windows.h>
-#include "tstring.h"
+#include "StringUtils/tstring.h"
 
 
 class CommandExec

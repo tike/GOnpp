@@ -1,7 +1,7 @@
 #pragma once
 
 #include "PluginInterface.h"
-#include "tstring.h"
+#include "StringUtils/tstring.h"
 
 class NppWrapper
 {

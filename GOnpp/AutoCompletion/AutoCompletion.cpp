@@ -6,8 +6,8 @@
 
 #include "goCommands/gocode.h"
 #include "CmdDlg.h"
-#include "tokens.h"
-#include "WcharMbcsConverter.h"
+#include "StringUtils/tokens.h"
+#include "StringUtils/WcharMbcsConverter.h"
 
 namespace {
 	tstring tgetenv(const tstring &name)

@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 #include "PluginInterface.h"
-#include "tstring.h"
+#include "StringUtils/tstring.h"
 
 class Settings
 {

@@ -20,7 +20,7 @@
 #include "PluginDefinition.h"
 #include <shlwapi.h>
 #include "CmdDlg.h"
-#include "AutoCompletion.h"
+#include "AutoCompletion/AutoCompletion.h"
 
 extern FuncItem funcItem[nbFunc];
 extern NppData nppData;

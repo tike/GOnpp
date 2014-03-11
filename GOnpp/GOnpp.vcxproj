@@ -109,7 +109,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AutoCompletion.cpp" />
+    <ClCompile Include="AutoCompletion\AutoCompletion.cpp" />
     <ClCompile Include="DockingFeature\CmdDlg.cpp" />
     <ClCompile Include="goCommands\CommandExec.cpp" />
     <ClCompile Include="goCommands\gocode.cpp" />
@@ -120,11 +120,11 @@
     <ClCompile Include="PluginDefinition.cpp" />
     <ClCompile Include="DockingFeature\StaticDialog.cpp" />
     <ClCompile Include="Settings.cpp" />
-    <ClCompile Include="tstring.cpp" />
-    <ClCompile Include="WcharMbcsConverter.cpp" />
+    <ClCompile Include="StringUtils\tstring.cpp" />
+    <ClCompile Include="StringUtils\WcharMbcsConverter.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AutoCompletion.h" />
+    <ClInclude Include="AutoCompletion\AutoCompletion.h" />
     <ClInclude Include="DockingFeature\DockingDlgInterface.h" />
     <ClInclude Include="DockingFeature\CmdDlg.h" />
     <ClInclude Include="ErrorMessages.h" />
@@ -139,13 +139,13 @@
     <ClInclude Include="PluginInterface.h" />
     <ClInclude Include="DockingFeature\resource.h" />
     <ClInclude Include="Settings.h" />
-    <ClInclude Include="tokens.h" />
-    <ClInclude Include="tstring.h" />
+    <ClInclude Include="StringUtils\tokens.h" />
+    <ClInclude Include="StringUtils\tstring.h" />
     <ClInclude Include="Version.h" />
     <ClInclude Include="Scintilla.h" />
     <ClInclude Include="DockingFeature\StaticDialog.h" />
     <ClInclude Include="DockingFeature\Window.h" />
-    <ClInclude Include="WcharMbcsConverter.h" />
+    <ClInclude Include="StringUtils\WcharMbcsConverter.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DockingFeature\goLine.rc" />

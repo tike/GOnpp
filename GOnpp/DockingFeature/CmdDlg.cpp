@@ -18,7 +18,7 @@
 
 #include "CmdDlg.h"
 #include "PluginDefinition.h"
-#include "tstring.h"
+#include "StringUtils/tstring.h"
 
 extern NppData nppData;
 

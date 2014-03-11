@@ -36,7 +36,7 @@
 
 #include "DockingDlgInterface.h"
 #include "resource.h"
-#include "tstring.h"
+#include "StringUtils/tstring.h"
 
 class CmdDlg : public DockingDlgInterface
 {
