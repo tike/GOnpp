@@ -1,6 +1,7 @@
 #include "AutoCompletion.h"
 
 #include <vector>
+#include <algorithm>
 #include "PluginInterface.h"
 #include "Scintilla.h"
 
@@ -234,17 +235,41 @@ bool AutoCompletion::show_calltip()
 		return true;
 	}
 
+	// find completions of word preceding the dangling paren
 	std::vector<completion> completions;
 	if (!run_gocode(pos-long(buf.size())+long(i+1), completions)) {
 		return false;
 	}
 
+	// find the word preceding the dangling paren
+	//std::vector<char>::reverse_iterator r_word_end = std::find_if(
+	//	std::vector<char>::reverse_iterator(buf.begin()+i+1),
+	//	buf.rend(),
+	//	std::not1(std::ptr_fun(is_go_word_char)));
+	//std::vector<TCHAR> word_buf = WcharMbcsConverter::char2tchar(
+	//	std::string(
+	//		r_word_end.base(),
+	//		buf.begin()+i+1
+	//	).c_str());
+	//tstring word(word_buf.begin(), word_buf.end());
+	int j = i-1;
+	while (j>=0 && is_go_word_char(buf[j])) {
+		j--;
+	}
+	std::vector<TCHAR> word_buf = WcharMbcsConverter::char2tchar(
+		std::string(buf.begin()+j+1, buf.begin()+i).c_str());
+	tstring word(&word_buf[0]);
+	_cmdDlg.setText(word);
+	_cmdDlg.appendText(_T("*\n"));
+	//_cmdDlg.setText(_T("[")+word+_T("]\n\n"));
+
 	//_cmdDlg.setText(_T("calltips\n"));
 	for (std::vector<completion>::iterator c=completions.begin(); c!=completions.end(); ++c) {
 		_cmdDlg.appendText(c->type + _T(",,") + c->name + _T(",,") + c->signature);
-		if (c->signature.substr(0, 4) == _T("func")) {
+		if (c->signature.substr(0, 4) == _T("func") && c->name == word) {
 			std::vector<char> sig = WcharMbcsConverter::tchar2char(c->signature.c_str() + 4);
 			_npp.send_scintilla(SCI_CALLTIPSHOW, pos-long(buf.size())+long(paren_i+1), (LPARAM)&sig[0]);
+			return true;
 		}
 	}
 
