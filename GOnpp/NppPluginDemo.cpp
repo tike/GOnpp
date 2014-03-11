@@ -21,8 +21,9 @@
 #include <shlwapi.h>
 #include "CmdDlg.h"
 #include "AutoCompletion/AutoCompletion.h"
+#include "FuncsArray.h"
 
-extern FuncItem funcItem[nbFunc];
+extern FuncsArray<6> funcs_array;
 extern NppData nppData;
 
 
@@ -67,8 +68,8 @@ extern "C" __declspec(dllexport) const TCHAR * getName()
 
 extern "C" __declspec(dllexport) FuncItem * getFuncsArray(int *nbF)
 {
-	*nbF = nbFunc;
-	return funcItem;
+	*nbF = funcs_array.N;
+	return funcs_array.items;
 }
 
 

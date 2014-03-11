@@ -62,7 +62,7 @@
       <PrecompiledHeaderFile />
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4099</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4099;4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -90,7 +90,7 @@
       <PrecompiledHeader />
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <DisableSpecificWarnings>4099</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4099;4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -128,6 +128,7 @@
     <ClInclude Include="DockingFeature\DockingDlgInterface.h" />
     <ClInclude Include="DockingFeature\CmdDlg.h" />
     <ClInclude Include="ErrorMessages.h" />
+    <ClInclude Include="FuncsArray.h" />
     <ClInclude Include="goCommands\CommandExec.h" />
     <ClInclude Include="goCommands\gocode.h" />
     <ClInclude Include="goCommands\goCommand.h" />

@@ -122,6 +122,9 @@
     <ClInclude Include="StringUtils\WcharMbcsConverter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FuncsArray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DockingFeature\goLine.rc">

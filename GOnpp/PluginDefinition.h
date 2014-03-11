@@ -36,7 +36,7 @@ const TCHAR NPP_PLUGIN_NAME[] = TEXT("GOnpp");
 //
 // Here define the number of your plugin commands
 //
-const int nbFunc = 5;
+//const int nbFunc = 5;
 
 
 //
@@ -60,12 +60,6 @@ void commandMenuInit();
 //Clean up your plugin commands allocation (if any)
 //
 void commandMenuCleanUp();
-
-//
-// Function which sets your command 
-//
-bool setCommand(size_t index, TCHAR *cmdName, PFUNCPLUGINCMD pFunc, ShortcutKey *sk = NULL, bool check0nInit = false);
-
 
 //
 // Your plugin command functions

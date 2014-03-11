@@ -30,10 +30,12 @@
 #include "goCommands/goRUN.h"
 #include "AutoCompletion/AutoCompletion.h"
 #include "Settings.h"
+#include "FuncsArray.h"
 
 std::auto_ptr<Settings> settings;
 CmdDlg _cmdDlg;
 std::auto_ptr<AutoCompletion> autocompletion;
+FuncsArray<6> funcs_array;
 
 
 #ifdef UNICODE 
@@ -41,8 +43,6 @@ std::auto_ptr<AutoCompletion> autocompletion;
 #else
 	#define generic_itoa itoa
 #endif
-
-FuncItem funcItem[nbFunc];
 
 //
 // The data of Notepad++ that you can use in your plugin commands
@@ -163,46 +163,12 @@ void go_code()
 // You should fill your plugins commands here
 void commandMenuInit()
 {	
-	ShortcutKey *fmtKey = new ShortcutKey;
-	fmtKey->_isAlt = true;
-	fmtKey->_isCtrl = false;
-	fmtKey->_isShift = false;
-	fmtKey->_key = 0x46; //VK_F
-    setCommand(0, _T("go fmt"), go_fmt, fmtKey, false);
-
-	ShortcutKey *testKey = new ShortcutKey;
-	testKey->_isAlt = true;
-	testKey->_isCtrl = false;
-	testKey->_isShift = false;
-	testKey->_key = 0x54; //VK_T
-
-    setCommand(1, _T("go test"), go_test, testKey, false);
-
-	ShortcutKey *installKey = new ShortcutKey;
-	installKey->_isAlt = true;
-	installKey->_isCtrl = false;
-	installKey->_isShift = false;
-	installKey->_key = 0x49; //VK_I
-
-	setCommand(2, _T("go install"), go_install, installKey, false);
-
-	ShortcutKey *runKey = new ShortcutKey;
-	runKey->_isAlt = true;
-	runKey->_isCtrl = false;
-	runKey->_isShift = false;
-	runKey->_key = 0x52; //VK_R
-
-	setCommand(3, _T("go run"), go_run, runKey, false);
-
-	ShortcutKey *gocodeKey = new ShortcutKey;
-	gocodeKey->_isAlt = true;
-	gocodeKey->_isCtrl = false;
-	gocodeKey->_isShift = false;
-	gocodeKey->_key = 'O'; // VK_O
-
-	setCommand(4, _T("gocode"), go_code, gocodeKey, false);
-
-	setCommand(DOCKABLE_DEMO_INDEX, _T("show output window"), CmdDlgShow, NULL, false);
+	funcs_array.set(0, _T("go fmt"), go_fmt, false, 'F', MOD_ALT);
+	funcs_array.set(1, _T("go test"), go_test, false, 'T', MOD_ALT);
+	funcs_array.set(2, _T("go install"), go_install, false, 'I', MOD_ALT);
+	funcs_array.set(3, _T("go run"), go_run, false, 'R', MOD_ALT);
+	funcs_array.set(4, _T("gocode"), go_code, false, 'O', MOD_ALT);
+	funcs_array.set(DOCKABLE_DEMO_INDEX, _T("show output window"), CmdDlgShow, false);
 
 	NppWrapper npp = NppWrapper(nppData);
 	tstring settings_filename;
@@ -222,35 +188,9 @@ void commandMenuInit()
 void commandMenuCleanUp()
 {
 	// Don't forget to deallocate your shortcut here
-	delete funcItem[0]._pShKey;
-	delete funcItem[1]._pShKey;
-	delete funcItem[2]._pShKey;
-	delete funcItem[3]._pShKey;
-	delete funcItem[4]._pShKey;
+	funcs_array.release_shortcut_keys();
 	settings->Write();
 }
-
-//
-// This function help you to initialize your plugin commands
-//
-bool setCommand(size_t index, TCHAR *cmdName, PFUNCPLUGINCMD pFunc, ShortcutKey *sk, bool check0nInit) 
-{
-    if (index >= nbFunc)
-        return false;
-
-    if (!pFunc)
-        return false;
-
-    lstrcpy(funcItem[index]._itemName, cmdName);
-    funcItem[index]._pFunc = pFunc;
-    funcItem[index]._init2Check = check0nInit;
-    funcItem[index]._pShKey = sk;
-
-    return true;
-}
-
-
-
 
 // To keep the goCmd class clean of notepad++ specific commands, 
 // notepad++ specific preparations (saving open files, etc) are done here
