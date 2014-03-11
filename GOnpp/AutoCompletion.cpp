@@ -91,6 +91,8 @@ bool AutoCompletion::invoke_gocode()
 		return false;
 	}
 
+	_npp.send_npp(NPPM_SAVECURRENTFILE);
+
         tstring file = _npp.get_full_current_filename();
 
 	if (_cmd.empty()) {
