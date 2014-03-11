@@ -6,6 +6,7 @@
 
 #include "goCommands/gocode.h"
 #include "CmdDlg.h"
+#include "tokens.h"
 
 namespace {
 	tstring tgetenv(const tstring &name)
@@ -17,34 +18,6 @@ namespace {
 		}
 		return tstring(&buf[0]);
 	}
-
-	class Tokens {
-		const tstring &_src;
-		const tstring &_separator;
-		tstring::size_type _begin, _end;
-
-	public:
-		Tokens(const tstring &src, const tstring &separator)
-			: _src(src), _separator(separator), _begin(0), _end(0)
-		{ }
-
-		bool next()
-		{
-			if (_end==tstring::npos || _separator.length()==0) {
-				return false;
-			}
-			if (_end != 0) {
-				_begin = _end + _separator.length();
-			}
-			_end = _src.find(_separator, _begin);
-			return true;
-		}
-
-		tstring get() const
-		{
-			return _src.substr(_begin, _end-_begin);
-		}
-	};
 
 	bool regular_file_exists(const tstring &path)
 	{
@@ -113,18 +86,14 @@ bool AutoCompletion::invoke_gocode()
         tstring file = _npp.get_full_current_filename();
         gocode goc;
         goc.init(file, offset);
-        if (! goc.Run()){
+        if (! goc.run()){
               // error failed to run;
               return false;
         }
 
         vector<completion> completions;
-        if ( ! goc.getCompletions(completions)){
-                // error failed to receive completions
-                return false;
-        }
+        goc.get_completions(completions);
 
-        
         return true;
 }
 

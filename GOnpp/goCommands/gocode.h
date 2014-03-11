@@ -10,9 +10,7 @@ using namespace std;
 
 struct completion {
         tstring type;
-        tstring something;
         tstring name;
-        tstring otherthing;
         tstring signature;
 };
 
@@ -23,14 +21,14 @@ public:
         gocode();
 
         void init(tstring& file, int offset);
-        bool Run();
+        bool run();
 
         DWORD _exitStatus;
 
-        bool getCompletions(vector<completion>& completions);
+        void get_completions(vector<completion>& completions);
 
 protected:
-        void splitString(tstring& in, vector<tstring>& into, TCHAR sep, int maxitems);
+        void split_string(const tstring& in, vector<tstring>& into, const tstring& sep);
 
         tstring _execpath;
         tstring _flags;

@@ -113,6 +113,9 @@
     <ClInclude Include="goCommands\gocode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="tokens.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DockingFeature\goLine.rc">

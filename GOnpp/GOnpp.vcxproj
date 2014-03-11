@@ -229,6 +229,7 @@
     <ClInclude Include="PluginInterface.h" />
     <ClInclude Include="DockingFeature\resource.h" />
     <ClInclude Include="Settings.h" />
+    <ClInclude Include="tokens.h" />
     <ClInclude Include="tstring.h" />
     <ClInclude Include="Version.h" />
     <ClInclude Include="Scintilla.h" />

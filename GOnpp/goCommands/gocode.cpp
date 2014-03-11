@@ -1,17 +1,19 @@
 #include <sstream>
 
 #include "CommandExec.h"
+#include "tokens.h"
 
 #include "gocode.h"
 
 
-gocode::gocode(void)
+gocode::gocode()
 {
         _execpath = tstring(_T("gocode.exe"));
         _flags = tstring(_T("-f=\"csv\""));
 }
 
-void gocode::init(tstring& file, int offset){
+void gocode::init(tstring& file, int offset)
+{
         std::basic_ostringstream<TCHAR> buf;
         buf
 		<< _execpath << _T(" ")
@@ -22,7 +24,8 @@ void gocode::init(tstring& file, int offset){
         _cmdline = buf.str();
 }
 
-bool gocode::Run(void){
+bool gocode::run()
+{
         CommandExec exec(_cmdline, tstring(_T("C:\\")));
 
         if ( ! exec.Start()) {
@@ -41,39 +44,21 @@ bool gocode::Run(void){
         return true;
 }
 
-void gocode::splitString(tstring& in, vector<tstring>& into, TCHAR sep, int maxitems){
-      std::basic_istringstream<TCHAR> outSS(in);
+void gocode::get_completions(vector<completion>& completions)
+{
+	for (Tokens line(_rawStdOut, _T("\n")); line.next(); ) {
+	        vector<tstring> parts;
+		for (Tokens part(line.get(), _T(",,")); part.next(); ) {
+			parts.push_back(part.get());
+		}
+		if (parts.size() != 3) {
+			continue;
+		}
 
-      while ( ! outSS.eof()){
-        tstring tmp_line;
-        getline(outSS, tmp_line, sep);
-        into.push_back(tmp_line);
-        if ((maxitems > 0 ) && (into.size() == maxitems) ){
-                break;
-        }
-      }
-}
-
-
-bool gocode::getCompletions(vector<completion>& completions){
-      vector<tstring> lines;
-      splitString(_rawStdOut, lines, _T('\n'), 0);
-
-      for (vector<tstring>::iterator i = lines.begin(); i!= lines.end(); ++i){
-        vector<tstring> parts;
-        splitString(*i, parts, _T(','), 5);
-        if (parts.size() != 5){
-                continue;
-        }
-
-        completion this_compl;
-        this_compl.type = parts[0];
-        this_compl.something = parts[1];
-        this_compl.name = parts[2];
-        this_compl.otherthing = parts[3];
-        this_compl.signature = parts[4];
-        completions.push_back(this_compl);
-      }
-
-     return true;
+		completion c;
+		c.type = parts[0];
+		c.name = parts[1];
+		c.signature = parts[2];
+		completions.push_back(c);
+	}
 }
