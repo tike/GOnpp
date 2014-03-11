@@ -72,9 +72,9 @@ tstring AutoCompletion::search_cmd()
 
 bool AutoCompletion::process_notification(SCNotification &n)
 {
-	//TODO:
-	// run `gocode -f=csv autocomplete BYTE_OFFSET < FILE_CONTENTS`
-	//  or `gocode -f=csv --in=FILE_PATH BYTE_OFFSET`
+	if (!_npp.current_file_is_go_file()) {
+		return false;
+	}
 
 	switch (n.nmhdr.code) {
 	case SCN_CHARADDED:
@@ -91,7 +91,8 @@ bool AutoCompletion::invoke_gocode()
 		return false;
 	}
 
-	//TODO: instead of saving current file, pipe its contents into gocode.exe's stdin
+	//TODO: instead of saving current file, pipe its contents into gocode.exe's stdin:
+	//      `gocode -f=csv autocomplete BYTE_OFFSET < FILE_CONTENTS`
 	_npp.send_npp(NPPM_SAVECURRENTFILE);
 
         tstring file = _npp.get_full_current_filename();
@@ -136,9 +137,6 @@ bool AutoCompletion::on_char_added(int c)
 	switch (c) {
 	case '.':
 		invoke_gocode();
-		//_npp.send_scintilla(SCI_AUTOCSETSEPARATOR, (WPARAM)'\n');
-		//_npp.send_scintilla(SCI_AUTOCSHOW, 0, (LPARAM)"foo\nbar\nbaz");
-		//_npp.send_scintilla(SCI_AUTOCSHOW, 0, (LPARAM)"foo bar baz");
 	}
 	return false;
 }

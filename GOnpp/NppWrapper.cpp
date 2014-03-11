@@ -25,15 +25,11 @@ LRESULT NppWrapper::send_npp(UINT msg, WPARAM wparam, LPARAM lparam)
 
 // checks the current files extention and compares it to ".go"
 // returns TRUE on match, FALSE otherwise
-bool NppWrapper::current_file_is_go_file(void){
+bool NppWrapper::current_file_is_go_file()
+{
 	TCHAR ext[MAX_PATH];
-	
-	// Check wether current file is a .go file
-	::SendMessage(_npp._nppHandle, NPPM_GETEXTPART, 0, (LPARAM)ext);
-	if (_tcscmp(ext, TEXT(".go")) != 0){
-		return false;
-	}
-	return true;
+	send_npp(NPPM_GETEXTPART, 0, (LPARAM)ext);
+	return _tcscmp(ext, _T(".go")) == 0;
 }
 
 // reloads all open files
