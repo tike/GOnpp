@@ -239,10 +239,10 @@ bool AutoCompletion::show_calltip()
 		return false;
 	}
 
-	_cmdDlg.setText(_T("calltips\n"));
+	//_cmdDlg.setText(_T("calltips\n"));
 	for (std::vector<completion>::iterator c=completions.begin(); c!=completions.end(); ++c) {
 		_cmdDlg.appendText(c->type + _T(",,") + c->name + _T(",,") + c->signature);
-		if (c->type == _T("func") && c->signature.length()>4) {
+		if (c->signature.substr(0, 4) == _T("func")) {
 			std::vector<char> sig = WcharMbcsConverter::tchar2char(c->signature.c_str() + 4);
 			_npp.send_scintilla(SCI_CALLTIPSHOW, pos-long(buf.size())+long(paren_i+1), (LPARAM)&sig[0]);
 		}
@@ -259,7 +259,7 @@ extern CmdDlg _cmdDlg;
 
 bool AutoCompletion::on_char_added(int c)
 {
-	_cmdDlg.setText(tstring(1, c));
+	//_cmdDlg.setText(tstring(1, c));
 	switch (c) {
 	case '.':
 		invoke_gocode();
