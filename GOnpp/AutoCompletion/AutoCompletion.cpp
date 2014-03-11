@@ -9,6 +9,10 @@
 #include "StringUtils/tokens.h"
 #include "StringUtils/WcharMbcsConverter.h"
 
+#ifdef max
+#undef max
+#endif
+
 namespace {
 	tstring tgetenv(const tstring &name)
 	{
@@ -42,6 +46,11 @@ namespace {
 			return true;
 		}
 		return false;
+	}
+
+	bool is_go_word_char(char c)
+	{
+		return (c>='a' && c<='z') || (c>='A' && c<='Z') || (c>='0' && c<='9') || (c=='_') || (c&0x80);
 	}
 
 } // anonymous namespace
@@ -98,7 +107,7 @@ int AutoCompletion::detect_prefix_length()
 	for (; caret>=0; caret--, prefix++) {
 		// FIXME: verify that `caret` points to what I think
 		char c = buf[caret];
-		if ((c>='a' && c<='z') || (c>='A' && c<='Z') || (c>='0' && c<='9') || (c=='_') || (c&0x80)) {
+		if (is_go_word_char(c)) {
 			// FIXME: what about numbers, is this OK?
 			continue;
 		}
@@ -107,14 +116,8 @@ int AutoCompletion::detect_prefix_length()
 	return prefix;
 }
 
-bool AutoCompletion::invoke_gocode()
+bool AutoCompletion::run_gocode(long offset, std::vector<completion> &completions)
 {
-	int offset = _npp.send_scintilla(SCI_GETCURRENTPOS);
-	if (offset == -1) {
-		// error failed to receive offset...
-		return false;
-	}
-
 	//TODO: instead of saving current file, pipe its contents into gocode.exe's stdin:
 	//      `gocode -f=csv autocomplete BYTE_OFFSET < FILE_CONTENTS`
 	_npp.send_npp(NPPM_SAVECURRENTFILE);
@@ -129,12 +132,27 @@ bool AutoCompletion::invoke_gocode()
 		return false;
 	}
 
-        vector<completion> completions;
-        gocode goc(_cmd);
-        if (!goc.run_for(file, offset, completions)) {
+        gocode g(_cmd);
+        if (!g.run_for(file, offset, completions)) {
               // error, failed to run
               return false;
         }
+
+	return true;
+}
+
+bool AutoCompletion::invoke_gocode()
+{
+	int offset = _npp.send_scintilla(SCI_GETCURRENTPOS);
+	if (offset == -1) {
+		// error failed to receive offset...
+		return false;
+	}
+
+        vector<completion> completions;
+	if (!run_gocode(offset, completions)) {
+		return false;
+	}
 
 	tstring buf;
 	for (vector<completion>::iterator c=completions.begin(); c!=completions.end(); ++c) {
@@ -155,6 +173,84 @@ bool AutoCompletion::invoke_gocode()
         return true;
 }
 
+bool AutoCompletion::show_calltip()
+{
+	_npp.send_scintilla(SCI_CALLTIPCANCEL);
+
+	// Invented algorithm:
+	// - walk back, until an outstanding open parenthesis '(' is found
+	//   - TODO: parse and skip strings
+	//   - TODO: walk more than one line, but invent some reasonable stop-condition (open curly bracket '{', or close bracket on column 0?)
+	// - walk over the parenthesis too, find preceding word
+	//   - if not a word precedes, cancel
+	// - then, if not column 0, run gocode
+	// - keep only the 'func' results, and only the (first) one matching the word preceding the paren
+	// - show calltip
+
+	LRESULT pos = _npp.send_scintilla(SCI_GETCURRENTPOS);
+
+	std::vector<char> buf(std::min<long>(pos, 1024));
+	if (buf.size() == 0) {
+		return true;
+	}
+
+	// retrieve some chunk of text preceding the cursor
+	Sci_TextRange range;
+	range.chrg.cpMax = pos;
+	range.chrg.cpMin = pos - long(buf.size()-1);
+	range.lpstrText = &buf[0];
+	_npp.send_scintilla(SCI_GETTEXTRANGE, 0, (LPARAM)&range);
+
+	int paren_i = 0;
+	int parens = 0;
+	int i=buf.size()-2;
+	for (; i>=0; i--) {
+		// first, try to find unmatched open paren '('
+		// FIXME: don't get confused with strings, chars, comments...
+		// TODO: to simplify, stop on first newline?
+		if (parens >= 0) {
+			switch (buf[i]) {
+			case ')':
+				parens++;
+				break;
+			case '(':
+				parens--;
+				paren_i = i;
+				break;
+			}
+			continue;
+		}
+
+		if (!is_go_word_char(buf[i])) {
+			continue;
+		}
+
+		i++;
+		break;
+	}
+	if (i <= 0) {
+		return true;
+	}
+
+	std::vector<completion> completions;
+	if (!run_gocode(pos, completions)) {
+		return false;
+	}
+
+	for (std::vector<completion>::iterator c=completions.begin(); c!=completions.end(); ++c) {
+		if (c->type == _T("func") && c->signature.length()>4) {
+			std::vector<char> sig = WcharMbcsConverter::tchar2char(c->signature.c_str() + 4);
+			_npp.send_scintilla(SCI_CALLTIPSHOW, pos+long(-buf.size()+paren_i+1), (LPARAM)&sig[0]);
+		}
+	}
+
+	if (completions.empty()) {
+		return true;
+	}
+
+	return true;
+}
+
 extern CmdDlg _cmdDlg;
 
 bool AutoCompletion::on_char_added(int c)
@@ -163,6 +259,9 @@ bool AutoCompletion::on_char_added(int c)
 	switch (c) {
 	case '.':
 		invoke_gocode();
+	case '(':
+	case ')':
+		show_calltip();
 	}
 	return false;
 }

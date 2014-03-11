@@ -23,7 +23,7 @@
 #include "AutoCompletion/AutoCompletion.h"
 #include "FuncsArray.h"
 
-extern FuncsArray<6> funcs_array;
+extern FuncsArray<7> funcs_array;
 extern NppData nppData;
 
 

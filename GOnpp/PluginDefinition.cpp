@@ -35,7 +35,7 @@
 std::auto_ptr<Settings> settings;
 CmdDlg _cmdDlg;
 std::auto_ptr<AutoCompletion> autocompletion;
-FuncsArray<6> funcs_array;
+FuncsArray<7> funcs_array;
 
 
 #ifdef UNICODE 
@@ -50,7 +50,7 @@ FuncsArray<6> funcs_array;
 NppData nppData;
 
 
-#define DOCKABLE_DEMO_INDEX 5
+#define DOCKABLE_DEMO_INDEX 6
 
 // Maximum length of environment variables.
 #define MAX_ENVIRON  32767
@@ -156,6 +156,14 @@ void go_code()
 	autocompletion->invoke_gocode();
 }
 
+void go_calltip()
+{
+	if (!autocompletion.get()) {
+		return;
+	}
+	autocompletion->show_calltip();
+}
+
 } // anonymous namespace
 
 //
@@ -167,7 +175,8 @@ void commandMenuInit()
 	funcs_array.set(1, _T("go test"), go_test, false, 'T', MOD_ALT);
 	funcs_array.set(2, _T("go install"), go_install, false, 'I', MOD_ALT);
 	funcs_array.set(3, _T("go run"), go_run, false, 'R', MOD_ALT);
-	funcs_array.set(4, _T("gocode"), go_code, false, 'O', MOD_ALT);
+	funcs_array.set(4, _T("gocode complete"), go_code, false, 'O', MOD_ALT);
+	funcs_array.set(5, _T("gocode calltip"), go_calltip, false, 'P', MOD_ALT);
 	funcs_array.set(DOCKABLE_DEMO_INDEX, _T("show output window"), CmdDlgShow, false);
 
 	NppWrapper npp = NppWrapper(nppData);

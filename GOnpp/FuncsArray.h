@@ -44,6 +44,7 @@ void FuncsArray<Size>::release_shortcut_keys()
 {
 	for (int i=0; i<N; i++) {
 		delete items[i]._pShKey;
+		items[i]._pShKey = 0;
 	}
 }
 
