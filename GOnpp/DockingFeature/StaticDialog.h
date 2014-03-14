@@ -59,8 +59,6 @@ public :
 		return _hSelf != 0;
 	};
 
-	void goToCenter();
-	
 	void destroy() {
 		::SendMessage(_hParent, NPPM_MODELESSDIALOG, MODELESSDIALOGREMOVE, (WPARAM)_hSelf);
 		::DestroyWindow(_hSelf);
@@ -72,7 +70,6 @@ protected :
 
 	virtual BOOL CALLBACK run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam) = 0;
 
-	void alignWith(HWND handle, HWND handle2Align, PosAlign pos, POINT &point);
 	HGLOBAL makeRTLResource(int dialogID, DLGTEMPLATE **ppMyDlgTemplate);
 };
 

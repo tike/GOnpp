@@ -17,22 +17,6 @@
 
 #include "StaticDialog.h"
 
-void StaticDialog::goToCenter()
-{
-	RECT rc;
-	::GetClientRect(_hParent, &rc);
-
-	POINT center;
-	center.x = rc.left + (rc.right - rc.left)/2;
-	center.y = rc.top + (rc.bottom - rc.top)/2;
-	::ClientToScreen(_hParent, &center);
-
-	int x = center.x - (_rc.right - _rc.left)/2;
-	int y = center.y - (_rc.bottom - _rc.top)/2;
-
-	::SetWindowPos(_hSelf, HWND_TOP, x, y, _rc.right - _rc.left, _rc.bottom - _rc.top, SWP_SHOWWINDOW);
-}
-
 HGLOBAL StaticDialog::makeRTLResource(int dialogID, DLGTEMPLATE **ppMyDlgTemplate)
 {
 	// Get Dlg Template resource
@@ -97,38 +81,4 @@ BOOL CALLBACK StaticDialog::dlgProc(HWND hwnd, UINT message, WPARAM wParam, LPAR
 		return pStaticDlg->run_dlgProc(message, wParam, lParam);
 	}
 	}
-}
-
-void StaticDialog::alignWith(HWND handle, HWND handle2Align, PosAlign pos, POINT &point)
-{
-	RECT rc, rc2;
-	::GetWindowRect(handle, &rc);
-
-	point.x = rc.left;
-	point.y = rc.top;
-
-	switch (pos)
-	{
-	case ALIGNPOS_LEFT:
-		::GetWindowRect(handle2Align, &rc2);
-		point.x -= rc2.right - rc2.left;
-		break;
-
-	case ALIGNPOS_RIGHT:
-		::GetWindowRect(handle, &rc2);
-		point.x += rc2.right - rc2.left;
-		break;
-
-	case ALIGNPOS_TOP:
-		::GetWindowRect(handle2Align, &rc2);
-		point.y -= rc2.bottom - rc2.top;
-		break;
-
-	default: //ALIGNPOS_BOTTOM
-		::GetWindowRect(handle, &rc2);
-		point.y += rc2.bottom - rc2.top;
-		break;
-	}
-
-	::ScreenToClient(_hSelf, &point);
 }
