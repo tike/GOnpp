@@ -153,12 +153,18 @@ void go_code()
 	if (!autocompletion.get()) {
 		return;
 	}
+	if (!NppWrapper(nppData).current_file_is_go_file()) {
+		return;
+	}
 	autocompletion->invoke_gocode();
 }
 
 void go_calltip()
 {
 	if (!autocompletion.get()) {
+		return;
+	}
+	if (!NppWrapper(nppData).current_file_is_go_file()) {
 		return;
 	}
 	autocompletion->show_calltip();
