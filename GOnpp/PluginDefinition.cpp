@@ -253,11 +253,15 @@ void go_fmt(void)
 	tstring cmd = tstring(_T("fmt"));
 	goCommand goCmd(cmd, tstring());
 
-	if ( ! run_go_tool(goCmd)) return;
+	if ( ! run_go_tool(goCmd)) {
+		return;
+	}
 
 	if( ! goCmd.exitStatus){
 		NppWrapper npp(nppData);
-		if (npp.reload_all_files())	_cmdDlg.display(false);
+		if (npp.reload_all_files()) {
+			_cmdDlg.display(false);
+		}
 	}
 }
 
@@ -266,7 +270,9 @@ void go_test(void)
 {
 	tstring cmd = tstring(_T("test"));
 	goCommand goCmd(cmd, tstring());
-	if ( ! run_go_tool(goCmd)) return;
+	if ( ! run_go_tool(goCmd)) {
+		return;
+	}
 }
 
 
