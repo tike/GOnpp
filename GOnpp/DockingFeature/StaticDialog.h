@@ -55,8 +55,8 @@ public :
 
 	virtual void create(int dialogID, bool isRTL = false);
 
-    virtual bool isCreated() const {
-		return _hSelf;
+	virtual bool isCreated() const {
+		return _hSelf != 0;
 	};
 
 	void goToCenter();

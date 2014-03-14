@@ -85,7 +85,7 @@ public:
 	}
 
 	virtual bool isVisible() const {
-		return ::IsWindowVisible(_hSelf);
+		return ::IsWindowVisible(_hSelf) != FALSE;
 	}
 
 	HWND getHSelf() const {
