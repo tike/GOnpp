@@ -70,51 +70,33 @@ public:
 	};
 
 protected :
-	virtual BOOL CALLBACK run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam)
-	{
-		switch (message) 
-		{
-
-			case WM_NOTIFY: 
-			{
-				LPNMHDR	pnmh	= (LPNMHDR)lParam;
-
-				if (pnmh->hwndFrom == _hParent)
-				{
-					switch (LOWORD(pnmh->code))
-					{
-						case DMN_CLOSE:
-						{
-							break;
-						}
-						case DMN_FLOAT:
-						{
-							_isFloating = true;
-							break;
-						}
-						case DMN_DOCK:
-						{
-							_isFloating = false;
-							break;
-						}
-						default:
-							break;
-					}
-				}
+	virtual BOOL CALLBACK run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam) {
+		switch (message) {
+		case WM_NOTIFY: {
+			LPNMHDR	pnmh = (LPNMHDR)lParam;
+			if (pnmh->hwndFrom != _hParent) {
 				break;
 			}
-			default:
+			switch (LOWORD(pnmh->code)) {
+			case DMN_FLOAT:
+				_isFloating = true;
 				break;
+			case DMN_DOCK:
+				_isFloating = false;
+				break;
+			}
+			break;
+		}
 		}
 		return FALSE;
 	};
 	
 	// Handles
-    HWND			_HSource;
-	int				_dlgID;
-	bool            _isFloating;
-	TCHAR            _moduleName[MAX_PATH];
-	TCHAR			_pluginName[MAX_PATH];
+	HWND  _HSource;
+	int   _dlgID;
+	bool  _isFloating;
+	TCHAR _moduleName[MAX_PATH];
+	TCHAR _pluginName[MAX_PATH];
 };
 
 #endif // DOCKINGDLGINTERFACE_H

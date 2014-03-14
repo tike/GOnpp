@@ -41,13 +41,16 @@
 class CmdDlg : public DockingDlgInterface
 {
 public :
-	CmdDlg() : DockingDlgInterface(IDD_SHELL_OUTPUT){};
+	CmdDlg()
+		: DockingDlgInterface(IDD_SHELL_OUTPUT)
+	{
+	};
 
     virtual void display(bool toShow = true) const {
         DockingDlgInterface::display(toShow);
     };
 
-	void setParent(HWND parent2set){
+	void setParent(HWND parent2set) {
 		_hParent = parent2set;
 	};
 
