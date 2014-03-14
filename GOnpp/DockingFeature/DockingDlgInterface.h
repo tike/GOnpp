@@ -25,49 +25,50 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "Docking.h"
 #include <shlwapi.h>
 
-
 class DockingDlgInterface : public StaticDialog
 {
 public:
-	DockingDlgInterface(): StaticDialog() {};
-	DockingDlgInterface(int dlgID): StaticDialog(), _dlgID(dlgID) {};
+	DockingDlgInterface()
+		: StaticDialog()
+	{ }
+
+	DockingDlgInterface(int dlgID)
+		: StaticDialog()
+		, _dlgID(dlgID)
+	{ }
 	
-	virtual void init(HINSTANCE hInst, HWND parent)
-	{
+	virtual void init(HINSTANCE hInst, HWND parent) {
 		StaticDialog::init(hInst, parent);
 		::GetModuleFileName((HMODULE)hInst, _moduleName, MAX_PATH);
 		lstrcpy(_moduleName, PathFindFileName(_moduleName));
 	}
 
-    void create(tTbData * data, bool isRTL = false){
+	void create(tTbData * data, bool isRTL = false) {
 		StaticDialog::create(_dlgID, isRTL);
 		::GetWindowText(_hSelf, _pluginName, sizeof(_pluginName));
 
-        // user information
-		data->hClient		= _hSelf;
-		data->pszName		= _pluginName;
+		// user information
+		data->hClient = _hSelf;
+		data->pszName = _pluginName;
 
-		// supported features by plugin
-		data->uMask			= 0;
+		data->uMask = 0; // supported features by plugin
+		data->pszAddInfo = NULL; // additional info
+	}
 
-		// additional info
-		data->pszAddInfo	= NULL;
-	};
-
-	virtual void updateDockingDlg(void) {
+	virtual void updateDockingDlg() {
 		::SendMessage(_hParent, NPPM_DMMUPDATEDISPINFO, 0, (LPARAM)_hSelf);
 	}
 
-    virtual void destroy() {
-    };
+	virtual void destroy() {
+	}
 
 	virtual void display(bool toShow = true) const {
 		::SendMessage(_hParent, toShow?NPPM_DMMSHOW:NPPM_DMMHIDE, 0, (LPARAM)_hSelf);
-	};
+	}
 
-	const TCHAR * getPluginFileName() const {
+	const TCHAR *getPluginFileName() const {
 		return _moduleName;
-	};
+	}
 
 protected :
 	virtual BOOL CALLBACK run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam) {

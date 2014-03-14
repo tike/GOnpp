@@ -41,22 +41,27 @@ struct DLGTEMPLATEEX {
 class StaticDialog : public Window
 {
 public :
-	StaticDialog() : Window() {};
+	StaticDialog()
+		: Window()
+	{ };
 
 	virtual ~StaticDialog() {
-		if (isCreated()) {
-			::SetWindowLongPtr(_hSelf, GWL_USERDATA, (long)NULL);	//Prevent run_dlgProc from doing anything, since its virtual
-			destroy();
+		if (!isCreated()) {
+			return;
 		}
+		::SetWindowLongPtr(_hSelf, GWL_USERDATA, (long)NULL); //Prevent run_dlgProc from doing anything, since its virtual
+		destroy();
 	};
+
 	virtual void create(int dialogID, bool isRTL = false);
 
     virtual bool isCreated() const {
-		return (_hSelf != NULL);
+		return _hSelf;
 	};
 
 	void goToCenter();
-    void destroy() {
+	
+	void destroy() {
 		::SendMessage(_hParent, NPPM_MODELESSDIALOG, MODELESSDIALOGREMOVE, (WPARAM)_hSelf);
 		::DestroyWindow(_hSelf);
 	};
@@ -64,9 +69,10 @@ public :
 protected :
 	RECT _rc;
 	static BOOL CALLBACK dlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+
 	virtual BOOL CALLBACK run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam) = 0;
 
-    void alignWith(HWND handle, HWND handle2Align, PosAlign pos, POINT & point);
+	void alignWith(HWND handle, HWND handle2Align, PosAlign pos, POINT &point);
 	HGLOBAL makeRTLResource(int dialogID, DLGTEMPLATE **ppMyDlgTemplate);
 };
 

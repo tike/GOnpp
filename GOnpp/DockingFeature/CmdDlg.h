@@ -43,16 +43,15 @@ class CmdDlg : public DockingDlgInterface
 public :
 	CmdDlg()
 		: DockingDlgInterface(IDD_SHELL_OUTPUT)
-	{
-	};
+	{ }
 
-    virtual void display(bool toShow = true) const {
-        DockingDlgInterface::display(toShow);
-    };
+	virtual void display(bool toShow = true) const {
+		DockingDlgInterface::display(toShow);
+	}
 
 	void setParent(HWND parent2set) {
 		_hParent = parent2set;
-	};
+	}
 
 	void setText(const tstring &text);
 	void appendText(const tstring &text);
@@ -64,8 +63,6 @@ protected :
 	void prettify(tstring &text);
 	void reshape(int width);
 	unsigned int _maxLine;
-private :
-
 };
 
 #endif //GOTILINE_DLG_H
