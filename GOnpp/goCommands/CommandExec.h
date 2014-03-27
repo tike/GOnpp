@@ -28,7 +28,7 @@ public:
 	~CommandExec(void);
 
 	bool Start(void);
-	bool Wait(void);
+	bool Wait(DWORD millis = INFINITE);
 
 	DWORD ExitStatus(void);
 

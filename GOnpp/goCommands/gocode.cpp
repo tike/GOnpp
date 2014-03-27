@@ -28,7 +28,7 @@ bool gocode::run_for(const tstring &go_file, int offset, vector<completion> &com
         if ( ! exec.Start()) {
 		return false;
 	}
-	if ( ! exec.Wait()) {
+	if ( ! exec.Wait(2000)) {
 		return false;
 	}
 	if ( ! exec.ReadOutput()) {

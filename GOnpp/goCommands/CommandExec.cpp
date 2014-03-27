@@ -156,8 +156,14 @@ bool CommandExec::readOutput(HANDLE handle, tstring& output){
 }
 
 
-bool CommandExec::Wait(void)
+bool CommandExec::Wait(DWORD millisTimeout)
 {
+	DWORD waited = WaitForSingleObject(this->pi.hProcess, millisTimeout);
+	if (waited != 0) {
+		TerminateProcess(this->pi.hProcess, -1);
+		this->exitStatus = -1;
+		return false;
+	}
 	if ( ! GetExitCodeProcess(this->pi.hProcess, &this->exitStatus)){
                 return true;
         }
